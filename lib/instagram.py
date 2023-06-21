@@ -16,7 +16,13 @@ logger = Logger()
 
 
 async def signup(browser, user, profile_id):
-    browser.get('https://instagram.com/accounts/emailsignup/')
+    browser.get('https://instagram.com')
+    await asyncio.sleep(2)
+    span = browser.find_element_by_xpath('//span[text()="Sign up"]')
+
+    # Click on the span element
+    span.click()
+    # browser.get('https://instagram.com/accounts/emailsignup/')
     # Wait until the element is present
     wait = WebDriverWait(browser, 30)  # Maximum wait time of 10 seconds
     inputEmailOrPhone = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "input[name=emailOrPhone]")))
@@ -31,9 +37,9 @@ async def signup(browser, user, profile_id):
         await asyncio.sleep(0.5)
     await asyncio.sleep(0.7)
     inputUsername = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "input[name=username]")))
-    # for char in user['username']:
-    #     inputUsername.send_keys(char)
-    #     await asyncio.sleep(0.5)
+    for char in user['username']:
+        inputUsername.send_keys(char)
+        await asyncio.sleep(0.5)
 
     inputUsername.send_keys(Keys.TAB + Keys.SPACE)
     await asyncio.sleep(1)

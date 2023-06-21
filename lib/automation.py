@@ -41,33 +41,33 @@ class Automation:
         key = 'hFXGJFunoIckg01PLNJlEqHG5IcG8niv'
 
         for element in service_list.get_services():
-            if element.name == 'United Kingdom':
+            if element.name == 'United States':
                 CountryId = element.id
 
         ServiceId = '457'
-        # jsonData = await HttpClient(SmSPoolAPI, logger).get(f"?key={key}&country={CountryId}&service={ServiceId}")
-        # phoneNumber = jsonData['phonenumber']
-        # orderId = jsonData['order_id']
-        # country = jsonData['country']
-        # success = jsonData['success']
-        # countryCode = jsonData['cc']
-        # message = jsonData['message']
+        jsonData = await HttpClient(SmSPoolAPI, logger).get(f"?key={key}&country={CountryId}&service={ServiceId}")
+        phoneNumber = jsonData['phonenumber']
+        orderId = jsonData['order_id']
+        country = jsonData['country']
+        success = jsonData['success']
+        countryCode = jsonData['cc']
+        message = jsonData['message']
 
-        user['number'] = '+6767678689769'
-        # user['orderId'] = orderId
-        # user['key'] = key
-        #
-        # print('[UserInformation]', {
-        #     'phoneNumber': user['number'],
-        #     'orderId': orderId,
-        #     'country': country,
-        #     'success': success,
-        #     'countryCode': countryCode,
-        #     'message': message
-        # })
-        #
-        # if message.startswith('This country is currently not available for this service'):
-        #     print('[Error Message]', {'jsonData': jsonData})
+        user['number'] = '+' + str(countryCode) + str(phoneNumber)
+        user['orderId'] = orderId
+        user['key'] = key
+
+        print('[UserInformation]', {
+            'phoneNumber': user['number'],
+            'orderId': orderId,
+            'country': country,
+            'success': success,
+            'countryCode': countryCode,
+            'message': message
+        })
+
+        if message.startswith('This country is currently not available for this service'):
+            print('[Error Message]', {'jsonData': jsonData})
 
         browser = await self.browser_local(self.profile_id)
         await signup(browser, user, self.profile_id)

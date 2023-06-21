@@ -23,7 +23,7 @@ class Automation:
     async def browser_local(self, profile_id):
         return webdriver.Chrome('./chromedriver')
 
-    async def generate_instagram_account(self, profile_id):
+    async def generate_instagram_account(self):
         CountryId = '15'
         user = {'username': fake.internet.user_name(), 'password': fake.internet.password(),
                 'firstName': fake.person.first_name(), 'lastName': fake.person.last_name()}
@@ -65,5 +65,5 @@ class Automation:
         if message.startswith('This country is currently not available for this service'):
             print('[Error Message]', {'jsonData': jsonData})
 
-        browser = await self.browser_local(profile_id)
-        await signup(browser, user, profile_id)
+        browser = await self.browser_local(self.profile_id)
+        await signup(browser, user, self.profile_id)

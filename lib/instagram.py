@@ -10,7 +10,6 @@ from selenium.webdriver.support.ui import Select
 
 message = ''
 time_left = ''
-status = 1
 
 logger = Logger()
 
@@ -83,7 +82,8 @@ async def signup(browser, user, profile_id):
             logger.error('Failed to add account to profile:' + str(e))
 
     async def fetch_otp_details():
-        while status not in [0, 2, 3, 4, 5, 6]:
+        api_status = 1
+        while api_status not in [0, 2, 3, 4, 5, 6]:
             try:
                 await asyncio.sleep(3)
                 sms_pool_fetch_api = 'https://api.smspool.net/sms/check'
@@ -93,7 +93,7 @@ async def signup(browser, user, profile_id):
                         if response.status == 200:
                             json_data = await response.json()
                             message = str(json_data['sms'])
-                            status = json_data['status']
+                            api_status = json_data['status']
                             time_left = json_data['time_left']
                             print('[OTP Response]', {'jsonData': json_data, 'message': message, 'timeLeft': time_left})
                             await asyncio.sleep(4)
@@ -103,8 +103,8 @@ async def signup(browser, user, profile_id):
             except Exception as e:
                 print('An error occurred while checking API status:', str(e))
                 break
-        print('[Status of the API is]', status)
-
+        print('[Status of the API is]', api_status)
+        return api_status
     await asyncio.sleep(5)
 
     def get_random_integer(min_val, max_val):
@@ -129,7 +129,7 @@ async def signup(browser, user, profile_id):
 
     await asyncio.sleep(10)
 
-    await fetch_otp_details()
+    status = await fetch_otp_details()
     inputConfirmationCode = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "input[name=confirmationCode]")))
     await asyncio.sleep(5)
     if status != 1:

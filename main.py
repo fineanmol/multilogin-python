@@ -1,20 +1,46 @@
-from faker import Faker
-from faker.providers import internet
+import asyncio
+from aioconsole import ainput
 
 from lib.automation import Automation
 from logger import Logger
-from constant import services
-import asyncio
 
-fake = Faker()
-service_list = services.ServiceList()
+from httpClient import HttpClient
 logger = Logger()
-loop = asyncio.get_event_loop()
 
-bot = Automation("53dd9d87-f1fa-4115-8af4-7910bc3cd1ba")
 
-loop.run_until_complete(bot.generate_instagram_account())
-fake.add_provider(internet)
+async def main():
+    while True:
+        print('=========\n' +
+              'Enter action to perform.\n' +
+              '1. Create Multilogin Profile\n' +
+              '2. Create Instagram Account\n' +
+              '3. Exit\n' +
+              '=========\n')
 
-print(fake.simple_profile())
-loop.close()
+        user_input = await ainput("Please enter your input: ")
+
+        if user_input == '1':
+            # Perform the action for creating a Multilogin profile
+            jsonData = await HttpClient("http://localhost:3001", logger).post("/profile/generate/5")
+            logger.info(jsonData)
+            # Your code for creating a Multilogin profile goes here
+
+        elif user_input == '2':
+            # Perform the action for creating an Instagram account
+            print("Creating Instagram Account...")
+            jsonData = await HttpClient("http://localhost:3001", logger).get("/profile/unused")
+            for profile in jsonData['profiles']:
+                logger.info(profile['uuid'])
+                bot = Automation(profile['uuid'])
+                await bot.generate_instagram_account()
+
+        elif user_input == '3':
+            # Exit the program
+            print("Exiting...")
+            break
+
+        else:
+            # Handle invalid input
+            print("Invalid input. Please try again.\n")
+
+asyncio.run(main())

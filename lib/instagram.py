@@ -102,7 +102,6 @@ async def signup(browser, user, profile_id):
                             break
             except Exception as e:
                 print('An error occurred while checking API status:', str(e))
-                break
         print('[Status of the API is]', api_status)
         return api_status
     await asyncio.sleep(5)

@@ -2,6 +2,11 @@ import asyncio
 import aiohttp
 import random
 from logger import Logger
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import Select
 
 message = ''
 time_left = ''
@@ -11,34 +16,43 @@ logger = Logger()
 
 
 async def signup(browser, user, profile_id):
-    page = await browser.newPage()
-    await page.goto('https://instagram.com/accounts/emailsignup/')
-
-    await page.waitForSelector('input[name=emailOrPhone]', visible=True)
+    browser.get('https://instagram.com/accounts/emailsignup/')
+    # Wait until the element is present
+    wait = WebDriverWait(browser, 30)  # Maximum wait time of 10 seconds
+    inputEmailOrPhone = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "input[name=emailOrPhone]")))
     await asyncio.sleep(0.3)
-    await page.type('input[name=emailOrPhone]', user['number'], {'delay': 27})
-
+    for char in user['number']:
+        inputEmailOrPhone.send_keys(char)
+        await asyncio.sleep(0.5)
     await asyncio.sleep(0.5)
-    await page.type('input[name=fullName]', f"{user['firstName']} {user['lastName']}", {'delay': 82})
-
+    inputFullName = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "input[name=fullName]")))
+    for char in user['name']:
+        inputFullName.send_keys(char)
+        await asyncio.sleep(0.5)
     await asyncio.sleep(0.7)
-    username = await page.querySelectorEval('input[name=username]', 'el => el.value')
-    if username:
-        user['username'] = username
-    else:
-        await page.type('input[name=username]', user['username'], {'delay': 67})
-    await page.keyboard.press('Tab')
+    inputUsername = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "input[name=username]")))
+    # for char in user['username']:
+    #     inputUsername.send_keys(char)
+    #     await asyncio.sleep(0.5)
+
+    inputUsername.send_keys(Keys.TAB + Keys.SPACE)
     await asyncio.sleep(1)
-    await page.keyboard.press('Space')
-    await asyncio.sleep(0.3)
-
-    await asyncio.sleep(0.3)
-    await page.type('input[name=password]', user['password'], {'delay': 42})
+    # browser.send_keys(Keys.SPACE)
+    await asyncio.sleep(1.3)
+    # submitButton = browser.find_element_by_xpath('//button[@type="button"]')
+    # submitButton.click()
+    await asyncio.sleep(1.3)
+    generatedUsername = inputUsername.get_attribute("value")
+    user['username'] = generatedUsername
+    await asyncio.sleep(2)
+    inputPassword = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "input[name=password]")))
+    for char in user['password']:
+        inputPassword.send_keys(char)
+        await asyncio.sleep(0.5)
 
     await asyncio.sleep(0.7)
-    signup_button = await page.xpath('//button[@type="submit"]')
-    user['username'] = await page.querySelectorEval('input[name=username]', 'el => el.value')
-
+    submitButton = browser.find_element_by_xpath('//button[@type="submit"]')
+    submitButton.click()
     await asyncio.sleep(4)
 
     async def add_account_data_to_profile():
@@ -85,30 +99,40 @@ async def signup(browser, user, profile_id):
                 break
         print('[Status of the API is]', status)
 
-    await asyncio.gather(signup_button[0].click({'delay': 70}))
-
     await asyncio.sleep(5)
 
     def get_random_integer(min_val, max_val):
         return str(random.randint(min_val, max_val))
 
-    await page.selectOption('select[title="Month:"]', get_random_integer(0, 12))
-    await page.selectOption('select[title="Day:"]', get_random_integer(0, 29))
-    await page.selectOption('select[title="Year:"]', get_random_integer(1965, 2000))
+    select_month = browser.find_element_by_css_selector('select[title="Month:"]')
+    select = Select(select_month)
+    select.select_by_value(get_random_integer(0, 12))
+
+    select_day = browser.find_element_by_css_selector('select[title="Day:"]')
+    select = Select(select_day)
+    select.select_by_value(get_random_integer(0, 29))
+
+    select_year = browser.find_element_by_css_selector('select[title="Year:"]')
+    select = Select(select_year)
+    select.select_by_value(get_random_integer(1965, 2000))
+
     await asyncio.sleep(5)
-    next_buttons = await page.xpath('//button[@type="button"]')
-    if len(next_buttons) > 0:
-        await next_buttons[1].click()
+
+    next_buttons = browser.find_element_by_xpath('//button[@type="button"]')
+    next_buttons.click()
+
+    await asyncio.sleep(10)
 
     await fetch_otp_details()
-    await page.waitForSelector('input[name=confirmationCode]', visible=True)
-    await asyncio.sleep(0.3)
+    inputConfirmationCode = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "input[name=confirmationCode]")))
+    await asyncio.sleep(5)
     if status != 1:
-        await page.type('input[name=confirmationCode]', message, {'delay': 27})
+        for char in message:
+            inputConfirmationCode.send_keys(char)
+            await asyncio.sleep(0.5)
         await asyncio.sleep(5)
-        confirmation_signup_button = await page.xpath('//button[@type="button"]')
-        if len(confirmation_signup_button) > 0:
-            await confirmation_signup_button[0].click()
-            await add_account_data_to_profile()
+        confirmation_signup_button = browser.find_element_by_xpath('//button[@type="button"]')
+        confirmation_signup_button.click()
+        await add_account_data_to_profile()
 
-    await page.close()
+    await browser.close()

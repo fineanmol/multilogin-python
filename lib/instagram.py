@@ -8,9 +8,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 
-message = ''
-time_left = ''
-
 logger = Logger.get_instance()
 
 
@@ -103,7 +100,7 @@ async def signup(browser, user, profile_id):
             except Exception as e:
                 print('An error occurred while checking API status:', str(e))
         print('[Status of the API is]', api_status)
-        return api_status
+        return api_status, message
     await asyncio.sleep(5)
 
     def get_random_integer(min_val, max_val):
@@ -128,11 +125,11 @@ async def signup(browser, user, profile_id):
 
     await asyncio.sleep(10)
 
-    status = await fetch_otp_details()
+    status, otp_message = await fetch_otp_details()
     inputConfirmationCode = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "input[name=confirmationCode]")))
     await asyncio.sleep(5)
     if status != 1:
-        for char in message:
+        for char in otp_message:
             inputConfirmationCode.send_keys(char)
             await asyncio.sleep(0.5)
         await asyncio.sleep(5)

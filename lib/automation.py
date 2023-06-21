@@ -10,7 +10,7 @@ import chromedriver_autoinstaller
 
 fake = Faker()
 service_list = services.ServiceList()
-logger = Logger()
+logger = Logger.get_instance()
 
 
 class Automation:
@@ -18,7 +18,7 @@ class Automation:
         self.profile_id = profile_id
 
     async def browser_multilogin(self, profile_id):
-        json_response = await HttpClient("http://127.0.0.1:35000/api/v1/profile", logger) \
+        json_response = await HttpClient("http://127.0.0.1:35000/api/v1/profile") \
             .get(f"/start?automation=true&profileId={profile_id}")
         return webdriver.Remote(command_executor=json_response['value'])
 
@@ -45,7 +45,7 @@ class Automation:
                 CountryId = element.id
 
         ServiceId = '457'
-        jsonData = await HttpClient(SmSPoolAPI, logger).get(f"?key={key}&country={CountryId}&service={ServiceId}")
+        jsonData = await HttpClient(SmSPoolAPI).get(f"?key={key}&country={CountryId}&service={ServiceId}")
         phoneNumber = jsonData['phonenumber']
         orderId = jsonData['order_id']
         country = jsonData['country']

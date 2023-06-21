@@ -11,7 +11,7 @@ from selenium.webdriver.support.ui import Select
 message = ''
 time_left = ''
 
-logger = Logger()
+logger = Logger.get_instance()
 
 
 async def signup(browser, user, profile_id):

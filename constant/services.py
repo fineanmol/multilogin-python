@@ -77,7 +77,7 @@ def _create_default_services():
         {"ID": 11, "name": 'Vietnam', "short_name": 'VN', "region": 'Asia'},
         {"ID": 12, "name": 'Philippines', "short_name": 'PH', "region": 'Asia'},
         {"ID": 15, "name": 'India', "short_name": 'IN', "region": 'Asia'},
-        {"ID": 18, "name": 'Kyrgyzstan', "short_name": 'KG\r\n', "region": 'Asia'},
+        {"ID": 18, "name": 'Kyrgyzstan', "short_name": 'KG', "region": 'Asia'},
         {"ID": 20, "name": 'Malaysia', "short_name": 'MY', "region": 'Asia'},
         {"ID": 26, "name": 'China', "short_name": 'CN', "region": 'Asia'},
         {"ID": 28, "name": 'Kyrgyzstan', "short_name": 'KG', "region": 'Asia'},

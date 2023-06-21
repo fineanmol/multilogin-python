@@ -5,7 +5,7 @@ from lib.automation import Automation
 from logger import Logger
 
 from httpClient import HttpClient
-logger = Logger()
+logger = Logger.get_instance()
 
 
 async def main():
@@ -21,14 +21,14 @@ async def main():
 
         if user_input == '1':
             # Perform the action for creating a Multilogin profile
-            jsonData = await HttpClient("http://localhost:3001", logger).post("/profile/generate/5")
+            jsonData = await HttpClient("http://localhost:3001").post("/profile/generate/5")
             logger.info(jsonData)
             # Your code for creating a Multilogin profile goes here
 
         elif user_input == '2':
             # Perform the action for creating an Instagram account
             print("Creating Instagram Account...")
-            jsonData = await HttpClient("http://localhost:3001", logger).get("/profile/unused")
+            jsonData = await HttpClient("http://localhost:3001").get("/profile/unused")
             for profile in jsonData['profiles']:
                 logger.info(profile['uuid'])
                 bot = Automation(profile['uuid'])

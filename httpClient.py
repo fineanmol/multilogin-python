@@ -1,4 +1,4 @@
-import requests
+import aiohttp
 
 
 class HttpClient:
@@ -6,30 +6,34 @@ class HttpClient:
         self.base_url = base_url
         self.logger = logger
 
-    def get(self, path, params=None, headers=None):
+    async def get(self, path, params=None, headers=None):
         url = self.base_url + path
         self.logger.info(f"GET {url}")
-        response = requests.get(url, params=params, headers=headers)
-        self.logger.info(f"Response Status Code: {response.status_code}")
-        return response
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, params=params, headers=headers) as response:
+                self.logger.info(f"Response Status Code: {response.status}")
+                return await response.json()
 
-    def post(self, path, data=None, headers=None):
+    async def post(self, path, data=None, headers=None):
         url = self.base_url + path
         self.logger.info(f"POST {url}")
-        response = requests.post(url, json=data, headers=headers)
-        self.logger.info(f"Response Status Code: {response.status_code}")
-        return response
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, json=data, headers=headers) as response:
+                self.logger.info(f"Response Status Code: {response.status}")
+                return await response.json()
 
-    def delete(self, path, headers=None):
+    async def delete(self, path, headers=None):
         url = self.base_url + path
         self.logger.info(f"DELETE {url}")
-        response = requests.delete(url, headers=headers)
-        self.logger.info(f"Response Status Code: {response.status_code}")
-        return response
+        async with aiohttp.ClientSession() as session:
+            async with session.delete(url, headers=headers) as response:
+                self.logger.info(f"Response Status Code: {response.status}")
+                return await response.json()
 
-    def put(self, path, data=None, headers=None):
+    async def put(self, path, data=None, headers=None):
         url = self.base_url + path
         self.logger.info(f"PUT {url}")
-        response = requests.put(url, json=data, headers=headers)
-        self.logger.info(f"Response Status Code: {response.status_code}")
-        return response
+        async with aiohttp.ClientSession() as session:
+            async with session.put(url, json=data, headers=headers) as response:
+                self.logger.info(f"Response Status Code: {response.status}")
+                return await response.json()

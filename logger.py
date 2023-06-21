@@ -1,9 +1,17 @@
 import logging
 
 
-class InstaLogger:
-    def __init__(self, name, log_file):
-        self.logger = logging.getLogger(name)
+class Logger:
+    _instance = None
+
+    @staticmethod
+    def get_instance():
+        if Logger._instance is None:
+            Logger._instance = Logger()
+        return Logger._instance
+
+    def __init__(self):
+        self.logger = logging.getLogger("MultiLogin")
         self.logger.setLevel(logging.INFO)
         self.formatter = logging.Formatter('[%(asctime)s] %(levelname)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
@@ -14,7 +22,7 @@ class InstaLogger:
         self.logger.addHandler(ch)
 
         # Add file handler
-        fh = logging.FileHandler(log_file)
+        fh = logging.FileHandler("multilogin.log")
         fh.setLevel(logging.INFO)
         fh.setFormatter(self.formatter)
         self.logger.addHandler(fh)
@@ -24,5 +32,3 @@ class InstaLogger:
 
     def error(self, message):
         self.logger.error(message)
-
-

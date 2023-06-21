@@ -24,7 +24,7 @@ class Automation:
         return webdriver.Remote(command_executor=json_response['value'])
 
     async def browser_local(self, profile_id):
-        return webdriver.Chrome('./chromedriver')
+        return webdriver.Chrome()
 
     async def generate_instagram_account(self):
         CountryId = '15'

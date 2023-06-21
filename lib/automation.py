@@ -6,6 +6,8 @@ from logger import Logger
 from constant import services
 from httpClient import HttpClient
 
+import chromedriver_autoinstaller
+
 fake = Faker()
 service_list = services.ServiceList()
 logger = Logger()
@@ -13,6 +15,7 @@ logger = Logger()
 
 class Automation:
     def __init__(self, profile_id):
+        chromedriver_autoinstaller.install()  # Check if the current version of chromedriver exists
         self.profile_id = profile_id
 
     async def browser_multilogin(self, profile_id):

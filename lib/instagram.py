@@ -63,7 +63,6 @@ async def signup(browser, user, profile_id):
             logger.error('Failed to add account to profile:' + str(e))
 
     async def fetch_otp_details():
-        nonlocal status, message, time_left
         while status not in [0, 2, 3, 4, 5, 6]:
             try:
                 await asyncio.sleep(3)

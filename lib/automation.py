@@ -32,25 +32,19 @@ class Automation:
         browser = await self.browser_local(self.profile_id)
         await signin(browser)
 
-    async def generate_instagram_account(self):
+    async def generate_instagram_account(self, environment):
         CountryId = '15'
         profile = fake.simple_profile()
         user = {'username': profile['username'], 'password': fake.password(length=12),
                 'name': profile['name']}
-
-        # user.username = user['username'].strip().lower().replace(
-        #     '[^\d\w-]', '-').replace('_', '-') \
-        #     .replace('^-', '').replace('-$', '') \
-        #     .replace('--', '-').replace('-', '')
-
-        key = 'hFXGJFunoIckg01PLNJlEqHG5IcG8niv'
 
         for element in service_list.get_services():
             if element.name == 'United Kingdom':
                 CountryId = element.id
 
         ServiceId = '457'
-        jsonData = await HttpClient(SmSPoolMockAPI).get(f"?key={key}&country={CountryId}&service={ServiceId}")
+        jsonData = await HttpClient(environment['sms_pool_purchase_api'])\
+            .get(f"?key={environment['key']}&country={CountryId}&service={ServiceId}")
         phoneNumber = jsonData['phonenumber']
         orderId = jsonData['order_id']
         country = jsonData['country']
@@ -74,5 +68,8 @@ class Automation:
         if message.startswith('This country is currently not available for this service'):
             print('[Error Message]', {'jsonData': jsonData})
 
-        browser = await self.browser_local(self.profile_id)
-        await signup(browser, user, self.profile_id)
+        browser = await self.browser_multilogin(self.profile_id) \
+            if environment.getboolean('isProd') \
+            else await self.browser_local(self.profile_id)
+
+        await signup(environment, browser, user, self.profile_id)

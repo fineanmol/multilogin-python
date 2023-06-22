@@ -12,7 +12,7 @@ from httpClient import HttpClient
 logger = Logger.get_instance()
 
 
-async def signup(browser, user, profile_id):
+async def signup(environment, browser, user, profile_id):
     browser.get('https://instagram.com')
     await asyncio.sleep(10)
     span = browser.find_element_by_xpath('//span[text()="Sign up"]')
@@ -74,14 +74,12 @@ async def signup(browser, user, profile_id):
 
     async def fetch_otp_details():
         api_status = 1
-        SmSPoolMockAPI = 'http://localhost:3001/sms/check'
         while api_status not in [0, 2, 3, 4, 5, 6]:
             try:
                 await asyncio.sleep(3)
-                sms_pool_fetch_api = 'https://api.smspool.net/sms/check'
                 async with aiohttp.ClientSession() as session:
                     async with session.get(
-                            f"{sms_pool_fetch_api}?orderid={user['orderId']}&key={user['key']}") as response:
+                            f"{environment['sms_pool_fetch_api']}?orderid={user['orderId']}&key={user['key']}") as response:
                         if response.status == 200:
                             json_data = await response.json()
                             message = str(json_data['sms'])

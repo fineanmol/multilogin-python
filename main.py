@@ -1,12 +1,24 @@
 import asyncio
+import os
+
 from aioconsole import ainput
 
+from httpClient import HttpClient
 from lib.automation import Automation
 from logger import Logger
 
-from httpClient import HttpClient
+import configparser
+
+# Read the configuration file
+config = configparser.ConfigParser()
+config.read('config.ini')
 logger = Logger.get_instance()
 
+
+# Determine the environment from the command-line argument
+input_environment = os.environ.get('ENVIRONMENT', 'Local')
+
+env = config[input_environment]
 
 async def main():
     while True:
@@ -33,10 +45,10 @@ async def main():
             for profile in jsonData['profiles']:
                 logger.info(profile['uuid'])
                 bot = Automation(profile['uuid'])
-                await bot.generate_instagram_account()
+                await bot.generate_instagram_account(env)
         elif user_input == '3':
-             bot = Automation('dummyUUid')
-             await bot.instagram_sign_in()
+            bot = Automation('dummyUUid')
+            await bot.instagram_sign_in()
 
         elif user_input == '3':
             # Exit the program
@@ -46,5 +58,6 @@ async def main():
         else:
             # Handle invalid input
             print("Invalid input. Please try again.\n")
+
 
 asyncio.run(main())

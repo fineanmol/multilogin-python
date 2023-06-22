@@ -25,7 +25,7 @@ class Automation:
 
     async def browser_local(self, profile_id):
         # chromedriver_autoinstaller.install()  # Check if the current version of chromedriver exists
-        return webdriver.Chrome('/Users/anmolagarwal/Downloads/driver_path/chromedriver')
+        return webdriver.Chrome('./chromedriver/chromedriver')
     
 
     async def instagram_sign_in(self):

@@ -2,7 +2,7 @@ from selenium import webdriver
 from faker import Faker
 
 from lib.instagram.instagramSignup import signup
-from lib.instagram.instaSignin import signin
+from lib.instagram.signin import signin
 from logger import Logger
 from constant import services
 from httpClient import HttpClient

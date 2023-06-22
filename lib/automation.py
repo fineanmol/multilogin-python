@@ -1,7 +1,8 @@
 from selenium import webdriver
 from faker import Faker
 
-from lib.instagram import signup
+from lib.instagram.instagramSignup import signup
+from lib.instagram.instaSignin import signin
 from logger import Logger
 from constant import services
 from httpClient import HttpClient
@@ -23,8 +24,13 @@ class Automation:
         return webdriver.Remote(command_executor=json_response['value'])
 
     async def browser_local(self, profile_id):
-        chromedriver_autoinstaller.install()  # Check if the current version of chromedriver exists
-        return webdriver.Chrome()
+        # chromedriver_autoinstaller.install()  # Check if the current version of chromedriver exists
+        return webdriver.Chrome('./chromedriver/chromedriver')
+    
+
+    async def instagram_sign_in(self):
+        browser = await self.browser_local(self.profile_id)
+        await signin(browser)
 
     async def generate_instagram_account(self):
         CountryId = '15'
@@ -71,5 +77,5 @@ class Automation:
         if message.startswith('This country is currently not available for this service'):
             print('[Error Message]', {'jsonData': jsonData})
 
-        browser = await self.browser_multilogin(self.profile_id)
+        browser = await self.browser_local(self.profile_id)
         await signup(browser, user, self.profile_id)

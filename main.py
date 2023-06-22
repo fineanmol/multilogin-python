@@ -33,7 +33,6 @@ async def main():
             for profile in jsonData['profiles']:
                 logger.info(profile['uuid'])
                 bot = Automation(profile['uuid'])
-                await bot.instagram_sign_in()
                 await bot.generate_instagram_account()
         elif user_input == '3':
              bot = Automation('dummyUUid')

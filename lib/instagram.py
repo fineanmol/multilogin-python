@@ -86,14 +86,14 @@ async def signup(browser, user, profile_id):
                             message = str(json_data['sms'])
                             api_status = json_data['status']
                             time_left = json_data['time_left']
-                            print('[OTP Response]', {'jsonData': json_data, 'message': message, 'timeLeft': time_left})
+                            logger.info('[OTP Response]'+ json_data)
                             await asyncio.sleep(4)
                         else:
-                            print('An error occurred while checking API status:', response.status)
+                            logger.info('An error occurred while checking API status:' + response.status)
                             break
             except Exception as e:
-                print('An error occurred while checking API status:', str(e))
-        print('[Status of the API is]', api_status)
+                logger.info('An error occurred while checking API status:' + str(e))
+        logger.info('[Status of the API is]' + api_status)
         return api_status, message
     await asyncio.sleep(5)
 
@@ -102,11 +102,11 @@ async def signup(browser, user, profile_id):
 
     select_month = browser.find_element_by_css_selector('select[title="Month:"]')
     select = Select(select_month)
-    select.select_by_value(get_random_integer(0, 12))
+    select.select_by_value(get_random_integer(1, 12))
 
     select_day = browser.find_element_by_css_selector('select[title="Day:"]')
     select = Select(select_day)
-    select.select_by_value(get_random_integer(0, 29))
+    select.select_by_value(get_random_integer(1, 29))
 
     select_year = browser.find_element_by_css_selector('select[title="Year:"]')
     select = Select(select_year)

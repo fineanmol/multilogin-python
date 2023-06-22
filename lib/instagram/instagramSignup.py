@@ -14,12 +14,12 @@ logger = Logger.get_instance()
 
 async def signup(browser, user, profile_id):
     browser.get('https://instagram.com')
-    await asyncio.sleep(20)
+    await asyncio.sleep(2)
     span = browser.find_element_by_xpath('//span[text()="Sign up"]')
 
     # Click on the span element
     span.click()
-    
+    # browser.get('https://instagram.com/accounts/emailsignup/')
     # Wait until the element is present
     wait = WebDriverWait(browser, 30)  # Maximum wait time of 10 seconds
     inputEmailOrPhone = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "input[name=emailOrPhone]")))
@@ -40,7 +40,10 @@ async def signup(browser, user, profile_id):
 
     inputUsername.send_keys(Keys.TAB + Keys.SPACE)
     await asyncio.sleep(1)
+    # browser.send_keys(Keys.SPACE)
     await asyncio.sleep(1.3)
+    # submitButton = browser.find_element_by_xpath('//button[@type="button"]')
+    # submitButton.click()
     await asyncio.sleep(1.3)
     generatedUsername = inputUsername.get_attribute("value")
     user['username'] = generatedUsername
@@ -71,13 +74,14 @@ async def signup(browser, user, profile_id):
 
     async def fetch_otp_details():
         api_status = 1
+        SmSPoolMockAPI = 'http://localhost:3001/sms/check'
         while api_status not in [0, 2, 3, 4, 5, 6]:
             try:
                 await asyncio.sleep(3)
                 sms_pool_fetch_api = 'https://api.smspool.net/sms/check'
                 async with aiohttp.ClientSession() as session:
                     async with session.get(
-                            f"{sms_pool_fetch_api}?orderid={user['orderId']}&key={user['key']}") as response:
+                            f"{SmSPoolMockAPI}?orderid={user['orderId']}&key={user['key']}") as response:
                         if response.status == 200:
                             json_data = await response.json()
                             message = str(json_data['sms'])

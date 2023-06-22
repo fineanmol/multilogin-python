@@ -1,8 +1,7 @@
 from selenium import webdriver
 from faker import Faker
 
-from lib.instagram.instagramSignup import signup
-from lib.instagram.instaSignin import signin
+from lib.instagram import signup
 from logger import Logger
 from constant import services
 from httpClient import HttpClient
@@ -24,13 +23,8 @@ class Automation:
         return webdriver.Remote(command_executor=json_response['value'])
 
     async def browser_local(self, profile_id):
-        # chromedriver_autoinstaller.install()  # Check if the current version of chromedriver exists
-        return webdriver.Chrome('/Users/anmolagarwal/Downloads/driver_path/chromedriver')
-    
-
-    async def instagram_sign_in(self):
-        browser = await self.browser_local(self.profile_id)
-        await signin(browser)
+        chromedriver_autoinstaller.install()  # Check if the current version of chromedriver exists
+        return webdriver.Chrome()
 
     async def generate_instagram_account(self):
         CountryId = '15'
@@ -44,14 +38,16 @@ class Automation:
         #     .replace('--', '-').replace('-', '')
 
         SmSPoolAPI = 'https://api.smspool.net/purchase/sms'
+        SmSPoolMockAPI = 'http://localhost:3001/purchase/sms'
+
         key = 'hFXGJFunoIckg01PLNJlEqHG5IcG8niv'
 
         for element in service_list.get_services():
             if element.name == 'United Kingdom':
                 CountryId = element.id
 
-        ServiceId = '457'  # 395 for Gmail  #?https://api.smspool.net/service/retrieve_all
-        jsonData = await HttpClient(SmSPoolAPI).get(f"?key={key}&country={CountryId}&service={ServiceId}")
+        ServiceId = '457'
+        jsonData = await HttpClient(SmSPoolMockAPI).get(f"?key={key}&country={CountryId}&service={ServiceId}")
         phoneNumber = jsonData['phonenumber']
         orderId = jsonData['order_id']
         country = jsonData['country']
@@ -69,12 +65,11 @@ class Automation:
             'country': country,
             'success': success,
             'countryCode': countryCode,
-            'message': message,
-            'user': user
+            'message': message
         })
 
         if message.startswith('This country is currently not available for this service'):
             print('[Error Message]', {'jsonData': jsonData})
 
-        browser = await self.browser_local(self.profile_id)
+        browser = await self.browser_multilogin(self.profile_id)
         await signup(browser, user, self.profile_id)

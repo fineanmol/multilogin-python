@@ -68,8 +68,8 @@ async def signup(browser, user, profile_id):
                 'phoneNumber': user['number']
             }
         }
-
-        json_response = await HttpClient(url).post(f"profile/{profile_id}/addAccount", account_details)
+        logger.info(account_details)
+        json_response = await HttpClient(url).post(f"/profile/{profile_id}/addAccount", account_details)
         logger.info(json_response)
 
     async def fetch_otp_details():
@@ -81,13 +81,13 @@ async def signup(browser, user, profile_id):
                 sms_pool_fetch_api = 'https://api.smspool.net/sms/check'
                 async with aiohttp.ClientSession() as session:
                     async with session.get(
-                            f"{SmSPoolMockAPI}?orderid={user['orderId']}&key={user['key']}") as response:
+                            f"{sms_pool_fetch_api}?orderid={user['orderId']}&key={user['key']}") as response:
                         if response.status == 200:
                             json_data = await response.json()
                             message = str(json_data['sms'])
                             api_status = json_data['status']
                             time_left = json_data['time_left']
-                            logger.info('[OTP Response]'+ json_data)
+                            logger.info(json_data)
                             await asyncio.sleep(4)
                         else:
                             logger.info('An error occurred while checking API status:' + str(response.status))

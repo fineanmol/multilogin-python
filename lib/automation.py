@@ -43,9 +43,6 @@ class Automation:
         #     .replace('^-', '').replace('-$', '') \
         #     .replace('--', '-').replace('-', '')
 
-        SmSPoolAPI = 'https://api.smspool.net/purchase/sms'
-        SmSPoolMockAPI = 'http://localhost:3001/purchase/sms'
-
         key = 'hFXGJFunoIckg01PLNJlEqHG5IcG8niv'
 
         for element in service_list.get_services():

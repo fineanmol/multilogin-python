@@ -14,7 +14,8 @@ async def main():
               'Enter action to perform.\n' +
               '1. Create Multilogin Profile\n' +
               '2. Create Instagram Account\n' +
-              '3. Exit\n' +
+              '3. SignIn Instagram Account\n' +
+              '4. Exit\n' +
               '=========\n')
 
         user_input = await ainput("Please enter your input: ")
@@ -32,7 +33,11 @@ async def main():
             for profile in jsonData['profiles']:
                 logger.info(profile['uuid'])
                 bot = Automation(profile['uuid'])
+                await bot.instagram_sign_in()
                 await bot.generate_instagram_account()
+        elif user_input == '3':
+             bot = Automation('dummyUUid')
+             await bot.instagram_sign_in()
 
         elif user_input == '3':
             # Exit the program

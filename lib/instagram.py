@@ -7,6 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
+from httpClient import HttpClient
 
 logger = Logger.get_instance()
 
@@ -59,7 +60,7 @@ async def signup(browser, user, profile_id):
 
     async def add_account_data_to_profile():
         await asyncio.sleep(4)
-        url = f"http://localhost:3001/profile/{profile_id}/addAccount"
+        url = "http://localhost:3001"
         account_details = {
             'account': {
                 'username': user['username'],
@@ -67,16 +68,9 @@ async def signup(browser, user, profile_id):
                 'phoneNumber': user['number']
             }
         }
-        try:
-            async with aiohttp.ClientSession() as session:
-                async with session.post(url, json=account_details) as response:
-                    if response.status == 200:
-                        response_data = await response.json()
-                        logger.info('Account added to profile' + response_data)
-                    else:
-                        logger.error('Failed to add account to profile:' + response.status)
-        except Exception as e:
-            logger.error('Failed to add account to profile:' + str(e))
+
+        json_response = await HttpClient(url).post(f"profile/{profile_id}/addAccount", account_details)
+        logger.info(json_response)
 
     async def fetch_otp_details():
         api_status = 1
@@ -120,7 +114,7 @@ async def signup(browser, user, profile_id):
 
     await asyncio.sleep(5)
 
-    next_buttons = browser.find_element_by_xpath('//button[@type="button"]')
+    next_buttons = browser.find_element_by_xpath('//button[text()="Next"]')
     next_buttons.click()
 
     await asyncio.sleep(10)
@@ -133,7 +127,7 @@ async def signup(browser, user, profile_id):
             inputConfirmationCode.send_keys(char)
             await asyncio.sleep(0.5)
         await asyncio.sleep(5)
-        confirmation_signup_button = browser.find_element_by_xpath('//button[@type="button"]')
+        confirmation_signup_button = browser.find_element_by_xpath('//button[text()="Confirm"]')
         confirmation_signup_button.click()
         await add_account_data_to_profile()
 

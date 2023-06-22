@@ -54,7 +54,7 @@ class Automation:
 
         user['number'] = '+' + str(countryCode) + str(phoneNumber)
         user['orderId'] = orderId
-        user['key'] = key
+        user['key'] = environment['key']
 
         print('[UserInformation]', {
             'phoneNumber': user['number'],

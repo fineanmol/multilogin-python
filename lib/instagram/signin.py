@@ -10,8 +10,8 @@ from lib.instagram.likePosts import like_post
 
 async def signin(browser):
     user = {
-        'email': '**',
-        'password': '**'
+        'email': 'jasonford468',
+        'password': ')7Y9sxfJJ&4Q'
     }
     browser.get('https://instagram.com')
     await asyncio.sleep(10)

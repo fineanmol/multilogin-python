@@ -28,7 +28,7 @@ async def signin(browser):
     signin_button.click()
     await asyncio.sleep(4)
 
-    time.sleep(20)
+    time.sleep(5)
     try:
         save_your_login_info_button = browser.find_element_by_xpath('//button[@type="button"]')
         if save_your_login_info_button.is_displayed():
@@ -38,9 +38,11 @@ async def signin(browser):
     finally:
         print('Login Success, Ready for the next step..\n')
         time.sleep(2)
-        browser.find_element_by_tag_name('body').send_keys(Keys.TAB)
-        browser.find_element_by_tag_name('body').send_keys(Keys.TAB)
-        time.sleep(2)
-        browser.find_element_by_tag_name('body').send_keys(Keys.SPACE)
-        time.sleep(0.3)
-        await like_post(browser)
+        # browser.find_element_by_tag_name('body').send_keys(Keys.TAB)
+        # browser.find_element_by_tag_name('body').send_keys(Keys.TAB)
+        # time.sleep(2)
+        # browser.find_element_by_tag_name('body').send_keys(Keys.SPACE)
+        # time.sleep(0.3)
+        button_notification = browser.find_element_by_xpath('//button[text()="Not Now"]')
+        button_notification.click()
+        like_post(browser)

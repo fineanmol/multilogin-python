@@ -7,7 +7,7 @@ from logger import Logger
 from constant import services
 from httpClient import HttpClient
 
-import chromedriver_autoinstaller
+from selenium.webdriver.chrome.options import Options
 
 fake = Faker()
 service_list = services.ServiceList()
@@ -25,7 +25,16 @@ class Automation:
 
     async def browser_local(self, profile_id):
         # chromedriver_autoinstaller.install()  # Check if the current version of chromedriver exists
-        return webdriver.Chrome('./chromedriver/chromedriver')
+        chrome_options = Options()
+
+        # Set user data directory
+        user_data_dir = '/Users/nnishad/Library/Application Support/Google/Chrome Beta'
+        chrome_options.add_argument(f"--user-data-dir={user_data_dir}")
+
+        # Set application path
+        chrome_binary_path = '/Applications/Google Chrome Beta.app/Contents/MacOS/Google Chrome Beta'
+        chrome_options.binary_location = chrome_binary_path
+        return webdriver.Chrome(executable_path = './chromedriver/chromedriver')
     
 
     async def instagram_sign_in(self):

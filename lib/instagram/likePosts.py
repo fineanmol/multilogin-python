@@ -60,11 +60,8 @@ def like_post(browser):
         browser.get('https://instagram.com')
         delay(2000)
 
-        turn_on_notification_buttons = browser.find_elements_by_xpath('/html/body/div[2]/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[3]/button[1]')
-
-        if turn_on_notification_buttons:
-            turn_on_notification_buttons[0].click()
-            print('[Turn on Notification, Yes Clicked]')
+        # button_notification = browser.find_element_by_xpath('//button[text()="Not Now"]')
+        # button_notification.click()
 
         like_posts_handler(browser)
 

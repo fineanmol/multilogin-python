@@ -86,11 +86,11 @@ async def signup(browser, user, profile_id):
                             logger.info('[OTP Response]'+ json_data)
                             await asyncio.sleep(4)
                         else:
-                            logger.info('An error occurred while checking API status:' + response.status)
+                            logger.info('An error occurred while checking API status:' + str(response.status))
                             break
             except Exception as e:
                 logger.info('An error occurred while checking API status:' + str(e))
-        logger.info('[Status of the API is]' + api_status)
+        logger.info('[Status of the API is]' + str(api_status))
         return api_status, message
     await asyncio.sleep(5)
 

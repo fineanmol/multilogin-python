@@ -130,4 +130,4 @@ async def signup(environment, browser, user, profile_id):
         confirmation_signup_button.click()
         await add_account_data_to_profile()
 
-    await browser.close()
+    browser.close()

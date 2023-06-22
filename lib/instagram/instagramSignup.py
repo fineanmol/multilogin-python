@@ -14,7 +14,7 @@ logger = Logger.get_instance()
 
 async def signup(browser, user, profile_id):
     browser.get('https://instagram.com')
-    await asyncio.sleep(2)
+    await asyncio.sleep(10)
     span = browser.find_element_by_xpath('//span[text()="Sign up"]')
 
     # Click on the span element

@@ -1,7 +1,8 @@
 from selenium import webdriver
 from faker import Faker
 
-from lib.instagram import signup
+from lib.instagram.instagramSignup import signup
+from lib.instagram.instaSignin import signin
 from logger import Logger
 from constant import services
 from httpClient import HttpClient
@@ -23,8 +24,13 @@ class Automation:
         return webdriver.Remote(command_executor=json_response['value'])
 
     async def browser_local(self, profile_id):
-        chromedriver_autoinstaller.install()  # Check if the current version of chromedriver exists
-        return webdriver.Chrome()
+        # chromedriver_autoinstaller.install()  # Check if the current version of chromedriver exists
+        return webdriver.Chrome('/Users/anmolagarwal/Downloads/driver_path/chromedriver')
+    
+
+    async def instagram_sign_in(self):
+        browser = await self.browser_local(self.profile_id)
+        await signin(browser)
 
     async def generate_instagram_account(self):
         CountryId = '15'
@@ -41,10 +47,10 @@ class Automation:
         key = 'hFXGJFunoIckg01PLNJlEqHG5IcG8niv'
 
         for element in service_list.get_services():
-            if element.name == 'United States':
+            if element.name == 'United Kingdom':
                 CountryId = element.id
 
-        ServiceId = '457'
+        ServiceId = '457'  # 395 for Gmail  #?https://api.smspool.net/service/retrieve_all
         jsonData = await HttpClient(SmSPoolAPI).get(f"?key={key}&country={CountryId}&service={ServiceId}")
         phoneNumber = jsonData['phonenumber']
         orderId = jsonData['order_id']
@@ -63,7 +69,8 @@ class Automation:
             'country': country,
             'success': success,
             'countryCode': countryCode,
-            'message': message
+            'message': message,
+            'user': user
         })
 
         if message.startswith('This country is currently not available for this service'):

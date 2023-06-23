@@ -69,12 +69,16 @@ class Automation:
         if message.startswith('This country is currently not available for this service'):
             print('[Error Message]', {'jsonData': jsonData})
 
-        browser = await self.browser_multilogin(self.profile_id) \
-            if environment.getboolean('isProd') \
-            else await self.browser_local(self.profile_id)
+        browser = await self.get_browser(environment)
 
         await signup(environment, browser, user, self.profile_id)
 
-    async def create_browser_history(self):
-        browser = await self.browser_local(self.profile_id)
+    async def get_browser(self, environment):
+        browser = await self.browser_multilogin(self.profile_id) \
+            if environment.getboolean('isProd') \
+            else await self.browser_local(self.profile_id)
+        return browser
+
+    async def create_browser_history(self,environment):
+        browser = await self.get_browser(environment)
         await start_crawler(browser)

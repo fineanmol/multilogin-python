@@ -58,7 +58,7 @@ async def main():
 
         elif user_input == '5':
             bot = Automation('dummyUUid')
-            await bot.create_browser_history()
+            await bot.create_browser_history(env)
 
         else:
             # Handle invalid input

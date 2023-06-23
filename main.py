@@ -57,8 +57,11 @@ async def main():
             break
 
         elif user_input == '5':
-            bot = Automation('dummyUUid')
-            await bot.create_browser_history(env)
+            jsonData = await HttpClient("http://localhost:3001").get("/profile/unused")
+            for profile in jsonData['profiles']:
+                logger.info(profile['uuid'])
+                bot = Automation(profile['uuid'])
+                await bot.create_browser_history(env)
 
         else:
             # Handle invalid input

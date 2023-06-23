@@ -43,8 +43,13 @@ async def start_crawler(browser):
     all_links = []
     for website in websites:
         await asyncio.sleep(2)
-        browser.get(website.get('url'))
+        browser.get("https://google.com/search?q="+website.get('url'))
+        try:
+            browser.find_element_by_xpath('//div[text()="Accept all"]').click()
+        except Exception as e:
+            logger.error(e)
         await asyncio.sleep(3)
+        browser.get(website.get('url'))
         try:
             browser.find_element_by_xpath(website.get("button_xpath")).click()
         except Exception as e:

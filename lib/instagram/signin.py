@@ -45,4 +45,4 @@ async def signin(browser):
         # time.sleep(0.3)
         button_notification = browser.find_element_by_xpath('//button[text()="Not Now"]')
         button_notification.click()
-        like_post(browser)
+        await like_post(browser)

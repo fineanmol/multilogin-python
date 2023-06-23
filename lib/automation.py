@@ -7,7 +7,7 @@ from logger import Logger
 from constant import services
 from httpClient import HttpClient
 
-from selenium.webdriver.chrome.options import Options
+import chromedriver_autoinstaller
 
 fake = Faker()
 service_list = services.ServiceList()
@@ -25,17 +25,8 @@ class Automation:
 
     async def browser_local(self, profile_id):
         # chromedriver_autoinstaller.install()  # Check if the current version of chromedriver exists
-        chrome_options = Options()
+        return webdriver.Chrome('./chromedriver/chromedriver')
 
-        # Set user data directory
-        user_data_dir = '/Users/nnishad/Library/Application Support/Google/Chrome Beta'
-        chrome_options.add_argument(f"--user-data-dir={user_data_dir}")
-
-        # Set application path
-        chrome_binary_path = '/Applications/Google Chrome Beta.app/Contents/MacOS/Google Chrome Beta'
-        chrome_options.binary_location = chrome_binary_path
-        return webdriver.Chrome(executable_path = './chromedriver/chromedriver')
-    
 
     async def instagram_sign_in(self):
         browser = await self.browser_local(self.profile_id)
@@ -48,11 +39,11 @@ class Automation:
                 'name': profile['name']}
 
         for element in service_list.get_services():
-            if element.name == 'United Kingdom':
+            if element.name == 'United States':
                 CountryId = element.id
 
         ServiceId = '457'
-        jsonData = await HttpClient(environment['sms_pool_purchase_api'])\
+        jsonData = await HttpClient(environment['sms_pool_purchase_api']) \
             .get(f"?key={environment['key']}&country={CountryId}&service={ServiceId}")
         phoneNumber = jsonData['phonenumber']
         orderId = jsonData['order_id']
@@ -61,7 +52,7 @@ class Automation:
         countryCode = jsonData['cc']
         message = jsonData['message']
 
-        user['number'] = '+' + str(countryCode) + str(phoneNumber)
+        user['number'] = str(phoneNumber)
         user['orderId'] = orderId
         user['key'] = environment['key']
 

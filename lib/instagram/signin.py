@@ -6,6 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from lib.instagram.likePosts import like_post
+from lib.instagram.followAccounts import follow_accounts
 
 
 async def signin(browser):
@@ -38,11 +39,7 @@ async def signin(browser):
     finally:
         print('Login Success, Ready for the next step..\n')
         time.sleep(2)
-        # browser.find_element_by_tag_name('body').send_keys(Keys.TAB)
-        # browser.find_element_by_tag_name('body').send_keys(Keys.TAB)
-        # time.sleep(2)
-        # browser.find_element_by_tag_name('body').send_keys(Keys.SPACE)
-        # time.sleep(0.3)
         button_notification = browser.find_element_by_xpath('//button[text()="Not Now"]')
         button_notification.click()
-        await like_post(browser)
+        # await like_post(browser)
+        await follow_accounts(browser)

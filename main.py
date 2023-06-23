@@ -35,7 +35,9 @@ async def main():
 
         if user_input == '1':
             # Perform the action for creating a Multilogin profile
-            jsonData = await HttpClient("http://localhost:3001").post("/profile/generate/5")
+            profile_count = await ainput("Input number of profiles to be created: ")
+
+            jsonData = await HttpClient("http://localhost:3001").post(f"/profile/generate/{profile_count}")
             logger.info(jsonData)
             # Your code for creating a Multilogin profile goes here
 

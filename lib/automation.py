@@ -1,6 +1,7 @@
 from selenium import webdriver
 from faker import Faker
 
+from lib.crawler import start_crawler
 from lib.instagram.instagramSignup import signup
 from lib.instagram.signin import signin
 from logger import Logger
@@ -73,3 +74,7 @@ class Automation:
             else await self.browser_local(self.profile_id)
 
         await signup(environment, browser, user, self.profile_id)
+
+    async def create_browser_history(self):
+        browser = await self.browser_local(self.profile_id)
+        await start_crawler(browser)

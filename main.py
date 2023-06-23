@@ -28,6 +28,7 @@ async def main():
               '2. Create Instagram Account\n' +
               '3. SignIn Instagram Account\n' +
               '4. Exit\n' +
+              '5. Crawl\n' +
               '=========\n')
 
         user_input = await ainput("Please enter your input: ")
@@ -54,6 +55,10 @@ async def main():
             # Exit the program
             print("Exiting...")
             break
+
+        elif user_input == '5':
+            bot = Automation('dummyUUid')
+            await bot.create_browser_history()
 
         else:
             # Handle invalid input

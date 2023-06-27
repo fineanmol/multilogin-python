@@ -5,7 +5,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-from lib.instagram.likePosts import like_post
 from lib.instagram.followAccounts import follow_accounts
 import pickle
 
@@ -35,6 +34,7 @@ def load_cookie(browser, filename):
         print("An error occurred while reading cookies file")
     except Exception as e:
         print("An unexpected error occurred:", str(e))
+
 
 
 async def signin(browser):
@@ -67,8 +67,8 @@ async def signin(browser):
         password.send_keys(user.get('password'))
 
         signin_button = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[contains(.,"Log in")]')))
-        signin_button.click()
         await asyncio.sleep(4)
+        signin_button.click()
 
         time.sleep(5)
         logger.info('Login Success, Ready for the next step..')
@@ -87,9 +87,5 @@ async def signin(browser):
         logger.info("Turn On Notification popup not found")
     await asyncio.sleep(2)
     save_cookie(browser, user['email'])
-    await asyncio.sleep(10)
+    await asyncio.sleep(5)
     quote = "Embrace the journey, chase your dreams, and let your story inspire others."
-    #await update_profile_bio(user.get('email'), user.get('password'), quote, browser)
-    await like_post(browser)
-    # await follow_accounts(browser)
-    #browser.quit()

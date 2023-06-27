@@ -9,6 +9,7 @@ from lib.instagram.likePosts import like_post
 from lib.instagram.followAccounts import follow_accounts
 import pickle
 
+from lib.instagram.updateBio import update_profile_bio
 from logger import Logger
 
 logger = Logger.get_instance()
@@ -76,8 +77,6 @@ async def signin(browser):
     else:
         logger.info("Already Logged In")
         time.sleep(2)
-    # await like_post(browser)
-    # await follow_accounts(browser)
     try:
         button_notification = browser.find_element_by_xpath('//button[text()="Not Now"]')
         button_notification.click()
@@ -85,5 +84,9 @@ async def signin(browser):
         logger.info("Turn On Notification popup not found")
     await asyncio.sleep(2)
     save_cookie(browser, user['email'])
-    await asyncio.sleep(30)
+    await asyncio.sleep(10)
+    quote = "Embrace the journey, chase your dreams, and let your story inspire others."
+    await update_profile_bio(user.get('email'), user.get('password'), quote, browser)
+    # await like_post(browser)
+    # await follow_accounts(browser)
     browser.quit()

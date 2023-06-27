@@ -1,65 +1,78 @@
 import time
 from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.action_chains import ActionChains
 
-
-async def follow_accounts(browser, user):
+async def follow_accounts(browser):
     try:
         username = 'vindiesel'
-        xPathStart = '/html/body/div[2]/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[2]/div[1]/div/div['
-        xPathEnd = ']/div/div/div/div[3]/div/button/div/div'
         followerUsernameXPathStart = '/html/body/div[2]/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[2]/div[1]/div/div['
         followerUsernameXPathEnd = ']/div/div/div/div[2]/div/div/span[1]/span/div/div/div/a'
         scrollStep = 500  # Number of pixels to scroll
-        scrollDelay = 1000  # Delay between each scroll step
+        scrollDelay = 1  # Delay between each scroll step
         maxScrollAttempts = 10  # Maximum number of scroll attempts
 
         # Go to profile browser
         browser.get(f"https://instagram.com/{username}/")
-        time.sleep(1)
+        # Wait until the elements are present
+        wait = WebDriverWait(browser, 30)  # Maximum wait time of 30 seconds
 
         # Click on followers button
-        browser.wait_for_selector(f"a[href='/{username}/followers/']")
-        browser.click(f"a[href='/{username}/followers/']")
+        followersBtn = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, f"a[href='/{username}/followers/']")))
+        followersBtn.click()
         time.sleep(1)
+        
+        
 
         # Scrape follower data
         for item in range(1, 101):
-            follow_buttons = browser.xpath(f"{xPathStart}{item}{xPathEnd}")
-            if follow_buttons:
-                follow_button = follow_buttons[0]
-                # Rest of your code using the 'follow_button' variable
-                follow_button.click()
-            time.sleep(2)
+            try:
+                follow_buttons = browser.find_elements_by_xpath('//button[@type="button" and div="Follow"]')
+                if follow_buttons:
+                    follow_button = follow_buttons[0]
+                    follow_button.click()
+                time.sleep(2)
+                cancel_unfollow = browser.find_element_by_xpath('//button[text()="Cancel"]')
+                if cancel_unfollow:
+                    cancel_unfollow.click()
+                follower_names = False
+                if follower_names and False:
+                    follower_name = follower_names[0]
+                    follower_text = follower_name.text
+                    current_date = time.time()
+                    timestamp = int(round(current_date * 1000))
+                    follower_data = {
+                        'followerUsername': follower_text,
+                        'timestamp': timestamp
+                    }
+                    print({'followerData': follower_data})
+                    # Store the 'followerData' object in your database
+                else:
+                    # Scroll to the next set of elements
+                    scroll_attempts = 0
+                    while scroll_attempts < maxScrollAttempts:
+                        browser.execute_script(f"window.scrollBy(0, {scrollStep})")  # Scroll vertically by 'scrollStep' pixels
+                        time.sleep(scrollDelay / 1000)
 
-            follower_names = browser.xpath(f"{followerUsernameXPathStart}{item}{followerUsernameXPathEnd}")
-            if follower_names:
-                follower_name = follower_names[0]
-                follower_text = follower_name.text
-                current_date = time.time()
-                timestamp = int(round(current_date * 1000))
-                follower_data = {
-                    'followerUsername': follower_text,
-                    'timestamp': timestamp
-                }
-                print({ 'followerData': follower_data })
-                # Store the 'followerData' object in your database
-            else:
-                # Scroll to the next set of elements
-                scroll_attempts = 0
-                while scroll_attempts < maxScrollAttempts:
-                    browser.execute_script(f"window.scrollBy(0, {scrollStep})")  # Scroll vertically by 'scrollStep' pixels
-                    time.sleep(scrollDelay / 1000)
+                        updated_follow_buttons = browser.find_elements_by_xpath('//button[@type="button" and div="Follow"]')
+                        cancel_unfollow = browser.find_element_by_xpath('//button[text()="Cancel"]')
+                        if cancel_unfollow:
+                            cancel_unfollow.click()
+                        if updated_follow_buttons:
+                            follow_button = updated_follow_buttons[0]
+                            follow_button.click()
+                            break  # Exit the loop after a successful button click
 
-                    updated_follow_buttons = browser.xpath(f"{xPathStart}{item}{xPathEnd}")
-                    if updated_follow_buttons:
-                        follow_button = updated_follow_buttons[0]
-                        # Rest of your code using the 'follow_button' variable
-                        follow_button.click()
-                        break  # Exit the loop after a successful button click
+                        scroll_attempts += 1
 
-                    scroll_attempts += 1
+                time.sleep(2)  # Delay between each iteration of the loop
 
-            time.sleep(2)  # Delay between each iteration of the loop
+            except Exception as e:
+                print("Unexpected exception:", e)
+                # Handle the exception accordingly
 
-    except Exception as err:
-        print(err)
+    except Exception as e:
+        print("Outer exception:", e)
+        # Handle the exception accordingly

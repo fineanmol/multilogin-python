@@ -14,13 +14,20 @@ config = configparser.ConfigParser()
 config.read('config.ini')
 logger = Logger.get_instance()
 
-
 # Determine the environment from the command-line argument
 input_environment = os.environ.get('ENVIRONMENT', 'Local')
 
 env = config[input_environment]
 
 async def main():
+    actions = {
+        '1': create_multilogin_profile,
+        '2': create_instagram_account,
+        '3': sign_in_instagram_account,
+        '4': exit_program,
+        '5': crawl
+    }
+    
     while True:
         print('=========\n' +
               'Enter action to perform.\n' +
@@ -33,41 +40,41 @@ async def main():
 
         user_input = await ainput("Please enter your input: ")
 
-        if user_input == '1':
-            # Perform the action for creating a Multilogin profile
-            profile_count = await ainput("Input number of profiles to be created: ")
-
-            jsonData = await HttpClient("http://localhost:3001").post(f"/profile/generate/{profile_count}")
-            logger.info(jsonData)
-            # Your code for creating a Multilogin profile goes here
-
-        elif user_input == '2':
-            # Perform the action for creating an Instagram account
-            print("Creating Instagram Account...")
-            jsonData = await HttpClient("http://localhost:3001").get("/profile/unused")
-            for profile in jsonData['profiles']:
-                logger.info(profile['uuid'])
-                bot = Automation(profile['uuid'])
-                await bot.generate_instagram_account(env)
-        elif user_input == '3':
-            bot = Automation('dummyUUid')
-            await bot.instagram_sign_in()
-
-        elif user_input == '4':
-            # Exit the program
-            print("Exiting...")
-            break
-
-        elif user_input == '5':
-            jsonData = await HttpClient("http://localhost:3001").get("/profile/unused")
-            for profile in jsonData['profiles']:
-                logger.info(profile['uuid'])
-                bot = Automation(profile['uuid'])
-                await bot.create_browser_history(env)
-
+        # Perform actions based on user input
+        action = actions.get(user_input)
+        if action:
+            await action()
         else:
             # Handle invalid input
             print("Invalid input. Please try again.\n")
 
+async def create_multilogin_profile():
+    profile_count = await ainput("Input number of profiles to be created: ")
+    jsonData = await HttpClient("http://localhost:3001").post(f"/profile/generate/{profile_count}")
+    logger.info(jsonData)
+    # Your code for creating a Multilogin profile goes here
+
+async def create_instagram_account():
+    print("Creating Instagram Account...")
+    jsonData = await HttpClient("http://localhost:3001").get("/profile/unused")
+    for profile in jsonData['profiles']:
+        logger.info(profile['uuid'])
+        bot = Automation(profile['uuid'])
+        await bot.generate_instagram_account(env)
+
+async def sign_in_instagram_account():
+    bot = Automation('dummyUUid')
+    await bot.instagram_sign_in()
+
+def exit_program():
+    print("Exiting...")
+    raise SystemExit
+
+async def crawl():
+    jsonData = await HttpClient("http://localhost:3001").get("/profile/unused")
+    for profile in jsonData['profiles']:
+        logger.info(profile['uuid'])
+        bot = Automation(profile['uuid'])
+        await bot.create_browser_history(env)
 
 asyncio.run(main())

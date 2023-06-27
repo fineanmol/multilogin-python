@@ -86,7 +86,7 @@ async def signin(browser):
     save_cookie(browser, user['email'])
     await asyncio.sleep(10)
     quote = "Embrace the journey, chase your dreams, and let your story inspire others."
-    await update_profile_bio(user.get('email'), user.get('password'), quote, browser)
-    # await like_post(browser)
+    #await update_profile_bio(user.get('email'), user.get('password'), quote, browser)
+    await like_post(browser)
     # await follow_accounts(browser)
-    browser.quit()
+    #browser.quit()

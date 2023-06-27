@@ -7,6 +7,10 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 
+from logger import Logger
+
+logger = Logger.get_instance()
+
 
 def delay(seconds):
     time.sleep(seconds / 1000)
@@ -14,47 +18,43 @@ def delay(seconds):
 
 async def new_like_post(browser):
     # Scroll to load more buttons and continue liking
-    # while True:
-    #     await asyncio.sleep(4)
-    #
-    #     posts = browser.find_elements_by_xpath("//article")
-    #
-    #     for post in posts:
-    #         like_button = post.find_element_by_css_selector("div > div:nth-child(3) > div > div > "
-    #                                                         "div:nth-child(1)"
-    #                                                         ">div:nth-child(1)>span>button")
-    #
-    #         post_button = post.find_element_by_css_selector("div > div:nth-child(2) > div")
-    #         # like_button.click()
-    #         likeActions = ActionChains(browser)
-    #         likeActions.move_to_element(post_button)
-    #         likeActions.double_click(post_button)
-    #         likeActions.perform()
-    #         await asyncio.sleep(1)
-        # Scroll to the end of the page
-        # browser.find_element(By.TAG_NAME, "body").send_keys(Keys.END)
-        # browser.execute_script("arguments[0].scrollIntoView();", posts[-1])
-        # # Scroll to the element
-        # actions = ActionChains(browser)
-        # actions.move_to_element(posts[-1]).perform()
-
-    hm = browser.find_element_by_xpath(
-        '//*[@id="react-root"]/section/nav/div[2]/div/div/div[3]/div/div[1]/div/a')
-
-    hm.click()
-
-    await asyncio.sleep(4)
-
-    for n in range(1, 1000):
-
+    counter = 1
+    while True:
+        await asyncio.sleep(4)
         try:
-            nm = '//*[@id="react-root"]/section/main/section/div[1]/div[1]/div/article[' + str(
-                n) + ']/div[2]/section[1]/span[1]/button'
+            posts = browser.find_elements_by_xpath("//article")
+            for post in posts:
+                element = post.find_element_by_xpath('//*[name()="svg"][@aria-label="Like"]')
+                element.click()
+                logger.info(counter)
+                counter = counter + 1
+                await asyncio.sleep(1)
 
-            follow = browser.find_element_by_xpath(nm)
-            follow.click()
-        except:
-            pass
+            # Scroll to the end of the page
+            browser.execute_script("arguments[0].scrollIntoView();", posts[-1])
+            # Find articles again after scrolling
+            posts = browser.find_elements(By.XPATH, "//article")
+        except Exception as e:
+            logger.info(e)
+
+    # hm = browser.find_element_by_xpath(
+    #     '//*[@id="react-root"]/section/nav/div[2]/div/div/div[3]/div/div[1]/div/a')
+    #
+    # hm.click()
+    #
+    # await asyncio.sleep(4)
+    #
+    # for n in range(1, 1000):
+    #
+    #     try:
+    #         nm = '//*[@id="react-root"]/section/main/section/div[1]/div[1]/div/article[' + str(
+    #             n) + ']/div[2]/section[1]/span[1]/button'
+    #
+    #         follow = browser.find_element_by_xpath(nm)
+    #         follow.click()
+    #     except:
+    #         pass
+
 
 async def like_posts_handler(browser):
     try:

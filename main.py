@@ -19,6 +19,7 @@ input_environment = os.environ.get('ENVIRONMENT', 'Local')
 
 env = config[input_environment]
 
+
 async def main():
     actions = {
         '1': create_multilogin_profile,
@@ -27,7 +28,7 @@ async def main():
         '4': exit_program,
         '5': crawl
     }
-    
+
     while True:
         print('=========\n' +
               'Enter action to perform.\n' +
@@ -48,11 +49,13 @@ async def main():
             # Handle invalid input
             print("Invalid input. Please try again.\n")
 
+
 async def create_multilogin_profile():
     profile_count = await ainput("Input number of profiles to be created: ")
     jsonData = await HttpClient("http://localhost:3001").post(f"/profile/generate/{profile_count}")
     logger.info(jsonData)
     # Your code for creating a Multilogin profile goes here
+
 
 async def create_instagram_account():
     print("Creating Instagram Account...")
@@ -62,13 +65,16 @@ async def create_instagram_account():
         bot = Automation(profile['uuid'])
         await bot.generate_instagram_account(env)
 
+
 async def sign_in_instagram_account():
     bot = Automation('dummyUUid')
     await bot.instagram_sign_in()
 
+
 def exit_program():
     print("Exiting...")
     raise SystemExit
+
 
 async def crawl():
     jsonData = await HttpClient("http://localhost:3001").get("/profile/unused")
@@ -76,5 +82,6 @@ async def crawl():
         logger.info(profile['uuid'])
         bot = Automation(profile['uuid'])
         await bot.create_browser_history(env)
+
 
 asyncio.run(main())

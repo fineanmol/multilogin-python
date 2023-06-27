@@ -45,14 +45,17 @@ async def signin(browser):
     browser.get('https://instagram.com')
     await asyncio.sleep(2)
     load_cookie(browser, user['email'])
+    await asyncio.sleep(2)
     browser.get('https://instagram.com')
+    await asyncio.sleep(2)
     try:
         accept_cookies_button = browser.find_element_by_xpath('//button[text()="Allow all cookies"]')
         accept_cookies_button.click()
     except Exception as e:
         logger.info("Accept cookie button not found!")
+    await asyncio.sleep(5)
     # Check if element with id "myElement" exists
-    elements = browser.find_elements_by_xpath('//button[contains(.,"Log in")]')
+    elements = browser.find_elements_by_xpath('//div[text()="Log in"]')
     if len(elements) > 0:
         logger.info("Not logged In")
         # Wait until the elements are present

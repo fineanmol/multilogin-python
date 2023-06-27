@@ -81,4 +81,4 @@ class Automation:
 
     async def create_browser_history(self,environment):
         browser = await self.get_browser(environment)
-        await start_crawler(browser)
+        await start_crawler(browser,self.profile_id)

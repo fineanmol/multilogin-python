@@ -1,0 +1,39 @@
+{
+    "day_2": {
+      "action": "follow_people"
+    },
+    "day_3": {
+      "action": "like_posts"
+    },
+    "day_4": {
+      "action": "like_posts"
+    },
+    "day_5": {
+      "action": "like_posts",
+      "parameters": {
+        "follow_people": true
+      }
+    },
+    "day_6": {
+      "action": "like_posts",
+      "parameters": {
+        "follow_people": true
+      }
+    },
+    "day_8": {
+      "action": "like_x_posts",
+      "parameters": {
+        "count": 10
+      }
+    },
+    "day_9": {
+      "action": "like_x_posts",
+      "parameters": {
+        "count": 10
+      }
+    },
+    "day_11": {
+      "action": "add_bio"
+    }
+  }
+  

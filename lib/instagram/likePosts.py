@@ -8,9 +8,40 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import StaleElementReferenceException
 from lib.instagram.signin import signin
+from logger import Logger
+
+logger = Logger.get_instance()
 
 async def delay(seconds):
     await asyncio.sleep(seconds)
+
+async def new_like_post(browser):
+    # Scroll to load more buttons and continue liking
+    counter = 1
+    while True:
+        await asyncio.sleep(4)
+        try:
+            posts = browser.find_elements(By.XPATH, "//article")
+            for i in range(len(posts)):
+                try:
+                    post = posts[i]
+                    element = post.find_element(By.XPATH, '//*[name()="svg"][@aria-label="Like"]')
+                    element.click()
+                    logger.info(f"Liked post {counter}")
+                    counter += 1
+                    await asyncio.sleep(1)
+                except Exception as ex:
+                    logger.error(f"Failed to click like button: {ex}")
+
+                # Scroll to the next post
+                if i < len(posts) - 1:
+                    next_post = posts[i + 1]
+                    browser.execute_script("arguments[0].scrollIntoView({ behavior: 'instant', block: 'center' });", next_post)
+
+            # Find articles again after scrolling
+            posts = browser.find_elements(By.XPATH, "//article")
+        except Exception as e:
+            logger.error(f"Failed to find articles: {e}")
 
 async def like_posts_handler(browser, daily_limit, session_limit):
     try:

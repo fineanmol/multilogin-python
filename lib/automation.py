@@ -1,6 +1,5 @@
 from selenium import webdriver
 from faker import Faker
-
 from lib.crawler import start_crawler
 from lib.instagram.instagramSignup import signup
 from lib.instagram.signin import signin

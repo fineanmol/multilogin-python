@@ -12,8 +12,10 @@ from logger import Logger
 
 logger = Logger.get_instance()
 
+
 async def delay(seconds):
     await asyncio.sleep(seconds)
+
 
 async def new_like_post(browser):
     # Scroll to load more buttons and continue liking
@@ -36,12 +38,14 @@ async def new_like_post(browser):
                 # Scroll to the next post
                 if i < len(posts) - 1:
                     next_post = posts[i + 1]
-                    browser.execute_script("arguments[0].scrollIntoView({ behavior: 'instant', block: 'center' });", next_post)
+                    browser.execute_script("arguments[0].scrollIntoView({ behavior: 'instant', block: 'center' });",
+                                           next_post)
 
             # Find articles again after scrolling
             posts = browser.find_elements(By.XPATH, "//article")
         except Exception as e:
             logger.error(f"Failed to find articles: {e}")
+
 
 async def like_posts_handler(browser, daily_limit, session_limit):
     try:
@@ -60,29 +64,31 @@ async def like_posts_handler(browser, daily_limit, session_limit):
             browser.execute_script(f"window.scrollBy(0, {scroll_step})")  # Scroll vertically by 'scroll_step' pixels
             await delay(scroll_delay)
             try:
-                like_buttons = wait.until(EC.presence_of_all_elements_located((By.XPATH, '//*[name()="svg"][@aria-label="Like"]')))
+                like_buttons = wait.until(
+                    EC.presence_of_all_elements_located((By.XPATH, '//*[name()="svg"][@aria-label="Like"]')))
                 username_fetch = wait.until(EC.presence_of_all_elements_located((By.XPATH, '//a[@role="link"]')))
-                print({ "length": len(like_buttons), "scroll attempts":scroll_attempts })
+                print({"length": len(like_buttons), "scroll attempts": scroll_attempts})
 
                 if like_buttons:
                     for i in range(len(like_buttons)):
                         await delay(1)
                         like_buttons[i].click()
                         counter += 1
-                        print({ "Liked Pressed": counter, "username": str(username_fetch[i].text) })
+                        print({"Liked Pressed": counter, "username": str(username_fetch[i].text)})
 
                         if counter >= session_limit:
                             print(f"Reached the session limit of {session_limit}. Exiting session...")
                             return  # Exit the function, which will lead to terminating the session
-                        
+
             except StaleElementReferenceException:
                 print("Stale Element Reference Exception occurred. Retrying...")
-            
+
             scroll_attempts += 1
     except Exception as err:
         print("Error, Like Button Click Failed")
         print("Message:", str(err) if str(err) else "Unknown Error")
         await like_posts_handler(browser, daily_limit, session_limit)
+
 
 async def like_post(browser, daily_limit, session_limit):
     try:
@@ -93,7 +99,8 @@ async def like_post(browser, daily_limit, session_limit):
     except Exception as err:
         print(err)
 
-async def like_post_run_program(browser,daily_limit):
+
+async def like_post_run_program(browser, daily_limit):
     session_count = 3  # Number of sessions per day
     session_duration = 3600  # Duration of each session in seconds
     session_limits = []  # List to store the session limits
@@ -146,6 +153,7 @@ async def like_post_run_program(browser,daily_limit):
             log_file.write(f"\nSession {log['session_number']} - Likes Done: {log['likes_done']}\n")
             log_file.write(f"Start Time: {log['start_time']}\n")
             log_file.write(f"End Time: {log['end_time']}\n")
+
 
 counter = 0  # Global counter for tracking likes
 # asyncio.run(run_program(daily_limit))

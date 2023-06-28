@@ -26,7 +26,8 @@ async def main():
         '2': create_instagram_account,
         '3': sign_in_instagram_account,
         '4': exit_program,
-        '5': crawl
+        '5': crawl,
+        '6': upload_profile_photo
     }
 
     while True:
@@ -37,6 +38,7 @@ async def main():
               '3. SignIn Instagram Account\n' +
               '4. Exit\n' +
               '5. Crawl\n' +
+              '6. Profile Photo Upload\n' +
               '=========\n')
 
         user_input = await ainput("Please enter your input: ")
@@ -82,6 +84,10 @@ async def crawl():
         logger.info(profile['uuid'])
         bot = Automation(profile['uuid'])
         await bot.create_browser_history(env)
+
+async def upload_profile_photo():
+    await sign_in_instagram_account()
+
 
 
 asyncio.run(main())

@@ -4,6 +4,7 @@ from lib.crawler import start_crawler
 from lib.instagram.instagramSignup import signup
 from lib.instagram.likePosts import like_post_run_program
 from lib.instagram.signin import signin
+from lib.instagram.updateBio import upload_profile_photo
 from logger import Logger
 from constant import services
 from httpClient import HttpClient
@@ -32,7 +33,8 @@ class Automation:
     async def instagram_sign_in(self):
         browser = await self.browser_local(self.profile_id)
         await signin(browser)
-        await like_post_run_program(browser,55)
+        await upload_profile_photo(browser)
+        # await like_post_run_program(browser,55)
 
     async def generate_instagram_account(self, environment):
         CountryId = '15'

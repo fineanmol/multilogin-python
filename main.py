@@ -85,9 +85,9 @@ async def crawl():
         bot = Automation(profile['uuid'])
         await bot.create_browser_history(env)
 
+
 async def upload_profile_photo():
     await sign_in_instagram_account()
-
 
 
 asyncio.run(main())

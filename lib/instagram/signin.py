@@ -1,14 +1,10 @@
 import asyncio
 import time
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-from lib.instagram.followAccounts import follow_accounts
 import pickle
 
-from lib.instagram.updateBio import update_profile_bio
 from logger import Logger
 
 logger = Logger.get_instance()
@@ -17,13 +13,13 @@ logger = Logger.get_instance()
 # Save cookies to a file
 def save_cookie(browser, filename):
     cookies = browser.get_cookies()
-    with open(f'{filename}-cookies.pkl', 'wb') as file:
+    with open(f'cookies/{filename}-cookies.pkl', 'wb') as file:
         pickle.dump(cookies, file)
 
 
 def load_cookie(browser, filename):
     try:
-        with open(f'{filename}-cookies.pkl', 'rb') as file:
+        with open(f'cookies/{filename}-cookies.pkl', 'rb') as file:
             cookies = pickle.load(file)
             # Add the cookies to the WebDriver
             for cookie in cookies:

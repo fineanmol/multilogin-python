@@ -88,7 +88,7 @@ if __name__ == '__main__':
     # Replace with your warmup configuration
     warmup_configuration = [
         {
-            "day_of_week": "Sunday",
+            "day_of_week": "Monday",
             "actions": [
                 {
                     "action_type": "LIKE",

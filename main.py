@@ -6,6 +6,7 @@ from aioconsole import ainput
 from httpClient import HttpClient
 from lib.automation import Automation
 from logger import Logger
+from test2_processing import schedule_and_execute_tasks
 
 import configparser
 
@@ -24,10 +25,11 @@ async def main():
     actions = {
         '1': create_multilogin_profile,
         '2': create_instagram_account,
-        '3': sign_in_instagram_account,
-        '4': exit_program,
-        '5': crawl,
-        '6': upload_profile_photo
+        '3': run_scheduler,
+        '4': modify_scheduler,
+        '5': exit_program,
+        '6': crawl,
+        '7': upload_profile_photo
     }
 
     while True:
@@ -35,13 +37,14 @@ async def main():
               'Enter action to perform.\n' +
               '1. Create Multilogin Profile\n' +
               '2. Create Instagram Account\n' +
-              '3. SignIn Instagram Account\n' +
-              '4. Exit\n' +
-              '5. Crawl\n' +
-              '6. Profile Photo Upload\n' +
+              '3. Run Instagram Warmup\n' +
+              '4. Modify Instagram Warmup Schedule\n' +
+              '5. Exit\n' +
+              '6. Crawl\n' +
+              '7. Profile Photo Upload\n' +
               '=========\n')
 
-        user_input = await ainput("Please enter your input: ")
+        user_input = input("Please enter your input: ")
 
         # Perform actions based on user input
         action = actions.get(user_input)
@@ -70,8 +73,18 @@ async def create_instagram_account():
 
 async def sign_in_instagram_account():
     bot = Automation('dummyUUid')
-    await bot.instagram_sign_in()
+    await bot.sign_in_to_instagram()
 
+async def run_scheduler():
+    bot = Automation('dummyUUid')
+    # await bot.sign_in_to_instagram()
+    await schedule_and_execute_tasks(bot)
+
+
+
+async def modify_scheduler():
+    bot = Automation('dummyUUid')
+    await bot.instagram_sign_in()
 
 def exit_program():
     print("Exiting...")

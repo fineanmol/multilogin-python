@@ -3,8 +3,9 @@ from faker import Faker
 from lib.crawler import start_crawler
 from lib.instagram.instagramSignup import signup
 from lib.instagram.likePosts import like_post_run_program
-from lib.instagram.signin import signin
-from lib.instagram.updateBio import upload_profile_photo
+from lib.instagram.signin import signin,update_profile_bio
+from lib.instagram.uploadProfilePhoto import upload_profile_photo
+from lib.instagram.followAccounts import follow_accounts
 from logger import Logger
 from constant import services
 from httpClient import HttpClient
@@ -30,11 +31,28 @@ class Automation:
         return webdriver.Chrome('./chromedriver/chromedriver')
 
 
-    async def instagram_sign_in(self):
+    async def sign_in_to_instagram(self):
         browser = await self.browser_local(self.profile_id)
         await signin(browser)
+        return browser
+
+    async def instagram_like_posts(self, daily_limit):
+        browser = await self.sign_in_to_instagram()
+        await like_post_run_program(browser, daily_limit)
+
+    async def instagram_upload_profile_photo(self):
+        browser = await self.sign_in_to_instagram()
         await upload_profile_photo(browser)
-        # await like_post_run_program(browser,55)
+
+    async def instagram_update_bio(self, quote):
+        browser = await self.sign_in_to_instagram()
+        await update_profile_bio(browser, quote)
+
+    async def instagram_follow_accounts(self):
+        browser = await self.sign_in_to_instagram()
+        await follow_accounts(browser)
+
+
 
     async def generate_instagram_account(self, environment):
         CountryId = '15'

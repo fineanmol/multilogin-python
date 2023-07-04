@@ -5,10 +5,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 import pickle
 
+
 from logger import Logger
 
 logger = Logger.get_instance()
-
+user_id=""
 
 # Save cookies to a file
 def save_cookie(browser, filename):
@@ -41,6 +42,7 @@ async def signin(browser):
     browser.get('https://instagram.com')
     await asyncio.sleep(2)
     load_cookie(browser, user['email'])
+    user_id= load_cookie(browser, user['email'])
     await asyncio.sleep(2)
     browser.get('https://instagram.com')
     await asyncio.sleep(2)
@@ -58,6 +60,7 @@ async def signin(browser):
         wait = WebDriverWait(browser, 30)  # Maximum wait time of 30 seconds
         input_email_or_phone = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "input[name=username]")))
         input_email_or_phone.send_keys(user.get('email') or user.get('username'))
+        user_id= user.get('email') or user.get('username')
 
         password = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "input[name=password]")))
         password.send_keys(user.get('password'))
@@ -84,4 +87,42 @@ async def signin(browser):
     await asyncio.sleep(2)
     save_cookie(browser, user['email'])
     await asyncio.sleep(5)
-    quote = "Embrace the journey, chase your dreams, and let your story inspire others."
+
+async def update_profile_bio(browser,quote):
+    try:
+        await asyncio.sleep(2)
+        wait = WebDriverWait(browser, 30)  # Maximum wait await asyncio of 30 seconds
+
+        # Go to the profile page
+        profile_link = browser.find_element(By.XPATH, "//a[@href='/" + user_id + "/']")
+        profile_link.click()
+        await asyncio.sleep(2)
+
+        # Click the "Edit Profile" button
+        edit_profile_button = browser.find_element_by_xpath('//a[text()="Edit Profile"]')
+        edit_profile_button.click()
+        await asyncio.sleep(3)
+        try:
+            account_center_button = browser.find_element_by_xpath('//div[@role="button"]')
+            if(len(account_center_button)>0):
+                cross_btn = account_center_button[1].click()
+        except:
+            print('Account Center Button Not Found')
+
+        # Clear the existing bio and update it with the random quote
+        bio_textarea = browser.find_element(By.XPATH, "//textarea")
+        bio_textarea.clear()
+        bio_textarea.send_keys(quote)
+
+        # Save the updated profile bio
+        submit_button = browser.find_element(By.XPATH, "//div[text()='Submit']")
+        await asyncio.sleep(2)
+        submit_button.click()
+
+        print("Profile bio updated successfully.")
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+    finally:
+        browser.quit()

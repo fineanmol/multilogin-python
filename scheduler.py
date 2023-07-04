@@ -9,7 +9,7 @@ import json
 
 from lib.instagram.likePosts import like_post
 from lib.instagram.followAccounts import follow_accounts
-from lib.instagram.updateBio import update_profile_bio
+from lib.instagram.uploadProfilePhoto import update_profile_bio
 
 async def follow_people():
     await follow_accounts()

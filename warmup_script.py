@@ -9,57 +9,8 @@ import time
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - Thread %(thread)d - %(message)s')
 
-warmup_configuration = [
-        {
-            "day_of_week": "Monday",
-            "actions": [
-                {
-                    "action_type": "LIKE",
-                    "sessions": [
-                        {
-                            "session_id": "session1",
-                            "count": 2,
-                            "start_time": "15:40:30",
-                            "end_time": "20:00:00"
-                        },
-                        {
-                            "session_id": "session2",
-                            "count": 6,
-                            "start_time": "15:42:30",
-                            "end_time": "20:00:00"
-                        },
-                        {
-                            "session_id": "session3",
-                            "count": 27,
-                            "start_time": "15:45:30",
-                            "end_time": "20:00:00"
-                        }
-                    ]
-                },
-                {
-                    "action_type": "FOLLOW",
-                    "sessions": [
-                        {
-                            "session_id": "session1",
-                            "count": 7,
-                            "start_time": "15:40:30",
-                            "end_time": "20:00:00"
-                        },
-                        {
-                            "session_id": "session2",
-                            "count": 23,
-                            "start_time": "15:50:30",
-                            "end_time": "20:00:00"
-                        }
-                    ]
-                }
-            ]
-        }
-    ]
 
-profiles = ['profile1', 'profile2', 'profile3']
-
-async def perform_action(profile_name, action_type, count, session_id,bot):
+def perform_action(profile_name, action_type, count, session_id):
     # Create a Selenium WebDriver instance for the profile
 
     # Perform the action multiple times
@@ -70,22 +21,21 @@ async def perform_action(profile_name, action_type, count, session_id,bot):
 
         # Perform the action using Selenium commands
         if action_type == 'LIKE':
-            logging.info(f"[Profile: {profile_name}] Session: {session_id} - [{action_type}] Like {i+1}/{count}")
-            bot.instagram_like_posts(count)
+            logging.info(f"[Profile: {profile_name}] Session: {session_id} - [{action_type}] Like {i + 1}/{count}")
             # Perform like action using Selenium
         elif action_type == 'FOLLOW':
-            logging.info(f"[Profile: {profile_name}] Session: {session_id} - [{action_type}] Follow {i+1}/{count}")
-            bot.instagram_follow_accounts()
+            logging.info(f"[Profile: {profile_name}] Session: {session_id} - [{action_type}] Follow {i + 1}/{count}")
             # Perform follow action using Selenium
-
 
     # Close the WebDriver
 
-async def schedule_task(profile_name, action_type, count, session_id,bot):
-    # Run the task immediately
-    perform_action(profile_name, action_type, count, session_id,bot)
 
-async def schedule_and_execute_tasks(bot):
+def schedule_task(profile_name, action_type, count, session_id):
+    # Run the task immediately
+    perform_action(profile_name, action_type, count, session_id)
+
+
+def schedule_and_execute_tasks(profiles, warmup_configuration):
     # Get the current weekday
     current_day = datetime.datetime.now().strftime("%A")
 
@@ -121,7 +71,7 @@ async def schedule_and_execute_tasks(bot):
                 logging.info(f"Scheduled task for [Profile: {profile_name}] Session: {session_id} - [{action_type}]")
 
     # Run the schedule in a separate thread
-    async def run_schedule():
+    def run_schedule():
         while True:
             schedule.run_pending()
             time.sleep(1)
@@ -151,19 +101,19 @@ if __name__ == '__main__':
                         {
                             "session_id": "session1",
                             "count": 2,
-                            "start_time": "21:06:30",
+                            "start_time": "20:46:30",
                             "end_time": "22:00:00"
                         },
                         {
                             "session_id": "session2",
                             "count": 6,
-                            "start_time": "21:07:30",
+                            "start_time": "20:47:30",
                             "end_time": "22:00:00"
                         },
                         {
                             "session_id": "session3",
                             "count": 27,
-                            "start_time": "21:08:30",
+                            "start_time": "20:48:30",
                             "end_time": "22:00:00"
                         }
                     ]
@@ -174,13 +124,13 @@ if __name__ == '__main__':
                         {
                             "session_id": "session1",
                             "count": 7,
-                            "start_time": "21:06:30",
+                            "start_time": "20:46:30",
                             "end_time": "22:00:00"
                         },
                         {
                             "session_id": "session2",
                             "count": 23,
-                            "start_time": "21:07:30",
+                            "start_time": "20:47:30",
                             "end_time": "22:00:00"
                         }
                     ]

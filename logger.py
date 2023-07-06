@@ -13,7 +13,7 @@ class Logger:
     def __init__(self):
         self.logger = logging.getLogger("MultiLogin")
         self.logger.setLevel(logging.INFO)
-        self.formatter = logging.Formatter('[%(asctime)s] %(levelname)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+        self.formatter = logging.Formatter('[%(asctime)s] %(levelname)s - Thread %(thread)d: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
         # Add console handler
         ch = logging.StreamHandler()

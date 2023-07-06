@@ -6,7 +6,7 @@ from aioconsole import ainput
 from httpClient import HttpClient
 from lib.automation import Automation
 from logger import Logger
-from test2_processing import schedule_and_execute_tasks
+# from test2_processing import schedule_and_execute_tasks
 
 import configparser
 

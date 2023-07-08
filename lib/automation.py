@@ -3,7 +3,7 @@ from faker import Faker
 from lib.crawler import start_crawler
 from lib.instagram.instagramSignup import signup
 from lib.instagram.likePosts import like_post_run_program, like_post
-from lib.instagram.signin import signin,update_profile_bio
+from lib.instagram.signin import signin, update_profile_bio
 from lib.instagram.uploadProfilePhoto import upload_profile_photo
 from lib.instagram.followAccounts import follow_accounts
 from logger import Logger
@@ -30,7 +30,6 @@ class Automation:
         # chromedriver_autoinstaller.install()  # Check if the current version of chromedriver exists
         return webdriver.Chrome('./chromedriver/chromedriver')
 
-
     async def sign_in_to_instagram(self):
         browser = await self.browser_local(self.profile_id)
         await signin(browser)
@@ -43,7 +42,7 @@ class Automation:
 
     async def instagram_upload_profile_photo(self, photo_path):
         browser = await self.sign_in_to_instagram()
-        await upload_profile_photo(browser,photo_path)
+        await upload_profile_photo(browser, photo_path)
         browser.quit()
 
     async def instagram_update_bio(self, quote):
@@ -53,10 +52,8 @@ class Automation:
 
     async def instagram_follow_accounts(self, follow_count):
         browser = await self.sign_in_to_instagram()
-        await follow_accounts(browser,follow_count)
+        await follow_accounts(browser, follow_count)
         browser.quit()
-
-
 
     async def generate_instagram_account(self, environment):
         CountryId = '15'
@@ -104,6 +101,6 @@ class Automation:
             else await self.browser_local(self.profile_id)
         return browser
 
-    async def create_browser_history(self,environment):
+    async def create_browser_history(self, environment):
         browser = await self.get_browser(environment)
-        await start_crawler(browser,self.profile_id)
+        await start_crawler(browser, self.profile_id)

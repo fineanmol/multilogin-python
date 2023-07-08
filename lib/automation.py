@@ -1,3 +1,7 @@
+import os
+
+import configparser
+
 from selenium import webdriver
 from faker import Faker
 from lib.crawler import start_crawler
@@ -17,21 +21,34 @@ service_list = services.ServiceList()
 logger = Logger.get_instance()
 
 
+async def browser_local():
+    # chromedriver_autoinstaller.install()  # Check if the current version of chromedriver exists
+    return webdriver.Chrome('./chromedriver/chromedriver')
+
+
+# Read the configuration file
+config = configparser.ConfigParser()
+config.read('config.ini')
+
+# Determine the environment from the command-line argument
+input_environment = os.environ.get('ENVIRONMENT', 'Local')
+
+env = config[input_environment]
+
+
+async def browser_multilogin(profile_id):
+    json_response = await HttpClient("http://127.0.0.1:35000/api/v1/profile") \
+        .get(f"/start?automation=true&profileId={profile_id}")
+    return webdriver.Remote(command_executor=json_response['value'])
+
+
 class Automation:
     def __init__(self, profile_id):
         self.profile_id = profile_id
-
-    async def browser_multilogin(self, profile_id):
-        json_response = await HttpClient("http://127.0.0.1:35000/api/v1/profile") \
-            .get(f"/start?automation=true&profileId={profile_id}")
-        return webdriver.Remote(command_executor=json_response['value'])
-
-    async def browser_local(self, profile_id):
-        # chromedriver_autoinstaller.install()  # Check if the current version of chromedriver exists
-        return webdriver.Chrome('./chromedriver/chromedriver')
+        self.environment = env
 
     async def sign_in_to_instagram(self):
-        browser = await self.browser_local(self.profile_id)
+        browser = await self.get_browser()
         await signin(browser)
         return browser
 
@@ -55,7 +72,7 @@ class Automation:
         await follow_accounts(browser, follow_count)
         browser.quit()
 
-    async def generate_instagram_account(self, environment):
+    async def generate_instagram_account(self):
         CountryId = '15'
         profile = fake.simple_profile()
         user = {'username': profile['username'], 'password': fake.password(length=12),
@@ -66,8 +83,8 @@ class Automation:
                 CountryId = element.id
 
         ServiceId = '457'
-        jsonData = await HttpClient(environment['sms_pool_purchase_api']) \
-            .get(f"?key={environment['key']}&country={CountryId}&service={ServiceId}")
+        jsonData = await HttpClient(self.environment['sms_pool_purchase_api']) \
+            .get(f"?key={self.environment['key']}&country={CountryId}&service={ServiceId}")
         phoneNumber = jsonData['phonenumber']
         orderId = jsonData['order_id']
         country = jsonData['country']
@@ -77,7 +94,7 @@ class Automation:
 
         user['number'] = str(phoneNumber)
         user['orderId'] = orderId
-        user['key'] = environment['key']
+        user['key'] = self.environment['key']
 
         print('[UserInformation]', {
             'phoneNumber': user['number'],
@@ -91,16 +108,16 @@ class Automation:
         if message.startswith('This country is currently not available for this service'):
             print('[Error Message]', {'jsonData': jsonData})
 
-        browser = await self.get_browser(environment)
+        browser = await self.get_browser()
 
-        await signup(environment, browser, user, self.profile_id)
+        await signup(self.environment, browser, user, self.profile_id)
 
-    async def get_browser(self, environment):
-        browser = await self.browser_multilogin(self.profile_id) \
-            if environment.getboolean('isProd') \
-            else await self.browser_local(self.profile_id)
+    async def get_browser(self):
+        browser = await browser_multilogin(self.profile_id) \
+            if self.environment.getboolean('isProd') \
+            else await browser_local()
         return browser
 
-    async def create_browser_history(self, environment):
-        browser = await self.get_browser(environment)
+    async def create_browser_history(self):
+        browser = await self.get_browser()
         await start_crawler(browser, self.profile_id)

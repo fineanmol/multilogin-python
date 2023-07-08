@@ -6,19 +6,8 @@ from aioconsole import ainput
 from httpClient import HttpClient
 from lib.automation import Automation
 from logger import Logger
-# from test2_processing import schedule_and_execute_tasks
 
-import configparser
-
-# Read the configuration file
-config = configparser.ConfigParser()
-config.read('config.ini')
 logger = Logger.get_instance()
-
-# Determine the environment from the command-line argument
-input_environment = os.environ.get('ENVIRONMENT', 'Local')
-
-env = config[input_environment]
 
 
 async def main():
@@ -68,23 +57,24 @@ async def create_instagram_account():
     for profile in jsonData['profiles']:
         logger.info(profile['uuid'])
         bot = Automation(profile['uuid'])
-        await bot.generate_instagram_account(env)
+        await bot.generate_instagram_account()
 
 
 async def sign_in_instagram_account():
     bot = Automation('dummyUUid')
     await bot.sign_in_to_instagram()
 
+
 async def run_scheduler():
     bot = Automation('dummyUUid')
     # await bot.sign_in_to_instagram()
-    await schedule_and_execute_tasks(bot)
-
+    # await schedule_and_execute_tasks(bot)
 
 
 async def modify_scheduler():
     bot = Automation('dummyUUid')
-    await bot.instagram_sign_in()
+    # await bot.instagram_sign_in()
+
 
 def exit_program():
     print("Exiting...")
@@ -96,7 +86,7 @@ async def crawl():
     for profile in jsonData['profiles']:
         logger.info(profile['uuid'])
         bot = Automation(profile['uuid'])
-        await bot.create_browser_history(env)
+        await bot.create_browser_history()
 
 
 async def upload_profile_photo():

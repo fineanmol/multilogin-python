@@ -1,5 +1,6 @@
 import asyncio
 import concurrent.futures
+import os
 from datetime import datetime
 import random
 import schedule
@@ -11,7 +12,6 @@ from lib.automation import Automation
 from logger import Logger
 from model.account import ActionType
 
-# Configure logging
 logger = Logger.get_instance()
 
 

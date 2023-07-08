@@ -90,7 +90,8 @@ async def crawl():
 
 
 async def upload_profile_photo():
-    await sign_in_instagram_account()
+    bot = Automation("")
+    await bot.instagram_upload_media_photo("/Users/nnishad/PythonProjects/multilogin-python/LinkedIn_icon.png")
 
 
 asyncio.run(main())

@@ -8,7 +8,7 @@ from lib.crawler import start_crawler
 from lib.instagram.instagramSignup import signup
 from lib.instagram.likePosts import like_post_run_program, like_post
 from lib.instagram.signin import signin, update_profile_bio
-from lib.instagram.uploadProfilePhoto import upload_profile_photo
+from lib.instagram.uploadProfilePhoto import upload_profile_photo, upload_media_photo
 from lib.instagram.followAccounts import follow_accounts
 from logger import Logger
 from constant import services
@@ -121,3 +121,8 @@ class Automation:
     async def create_browser_history(self):
         browser = await self.get_browser()
         await start_crawler(browser, self.profile_id)
+
+    async def instagram_upload_media_photo(self, photo_path):
+        browser = await self.sign_in_to_instagram()
+        await upload_media_photo(browser, photo_path, "Hello Everyone!!!")
+        browser.quit()

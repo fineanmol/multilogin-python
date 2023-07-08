@@ -10,6 +10,7 @@ from lib.instagram.likePosts import like_post_run_program, like_post
 from lib.instagram.signin import signin, update_profile_bio
 from lib.instagram.uploadProfilePhoto import upload_profile_photo, upload_media_photo
 from lib.instagram.followAccounts import follow_accounts
+from lib.pexel_api import download_random_image
 from logger import Logger
 from constant import services
 from httpClient import HttpClient
@@ -122,7 +123,8 @@ class Automation:
         browser = await self.get_browser()
         await start_crawler(browser, self.profile_id)
 
-    async def instagram_upload_media_photo(self, photo_path):
+    async def instagram_upload_media_photo(self):
         browser = await self.sign_in_to_instagram()
-        await upload_media_photo(browser, photo_path, "Hello Everyone!!!")
-        browser.quit()
+        media_path, caption = await download_random_image()
+        await upload_media_photo(browser, media_path, caption)
+        # browser.quit()

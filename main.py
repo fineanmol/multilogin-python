@@ -18,7 +18,8 @@ async def main():
         '4': modify_scheduler,
         '5': exit_program,
         '6': crawl,
-        '7': upload_profile_photo
+        '7': upload_profile_photo,
+        '8': upload_media
     }
 
     while True:
@@ -31,6 +32,7 @@ async def main():
               '5. Exit\n' +
               '6. Crawl\n' +
               '7. Profile Photo Upload\n' +
+              '8. Media Photo Upload\n' +
               '=========\n')
 
         user_input = input("Please enter your input: ")
@@ -91,7 +93,12 @@ async def crawl():
 
 async def upload_profile_photo():
     bot = Automation("")
-    await bot.instagram_upload_media_photo("/Users/nnishad/PythonProjects/multilogin-python/LinkedIn_icon.png")
+    await bot.instagram_upload_profile_photo("/Users/nikhil_nishad/Develop/python/multilogin-python/LinkedIn_icon.png")
+
+
+async def upload_media():
+    bot = Automation("")
+    await bot.instagram_upload_media_photo()
 
 
 asyncio.run(main())

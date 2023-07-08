@@ -1,4 +1,5 @@
 import asyncio
+import os
 import time
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
@@ -14,6 +15,8 @@ user_id = ""
 # Save cookies to a file
 def save_cookie(browser, filename):
     cookies = browser.get_cookies()
+    os.makedirs(os.path.dirname(f'cookies/{filename}-cookies.pkl'),
+                exist_ok=True)  # Create directory if not present
     with open(f'cookies/{filename}-cookies.pkl', 'wb') as file:
         pickle.dump(cookies, file)
 

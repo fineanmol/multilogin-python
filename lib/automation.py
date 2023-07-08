@@ -2,7 +2,7 @@ from selenium import webdriver
 from faker import Faker
 from lib.crawler import start_crawler
 from lib.instagram.instagramSignup import signup
-from lib.instagram.likePosts import like_post_run_program
+from lib.instagram.likePosts import like_post_run_program, like_post
 from lib.instagram.signin import signin,update_profile_bio
 from lib.instagram.uploadProfilePhoto import upload_profile_photo
 from lib.instagram.followAccounts import follow_accounts
@@ -38,19 +38,23 @@ class Automation:
 
     async def instagram_like_posts(self, daily_limit):
         browser = await self.sign_in_to_instagram()
-        await like_post_run_program(browser, daily_limit)
+        await like_post(browser, daily_limit)
+        browser.quit()
 
-    async def instagram_upload_profile_photo(self):
+    async def instagram_upload_profile_photo(self, photo_path):
         browser = await self.sign_in_to_instagram()
-        await upload_profile_photo(browser)
+        await upload_profile_photo(browser,photo_path)
+        browser.quit()
 
     async def instagram_update_bio(self, quote):
         browser = await self.sign_in_to_instagram()
         await update_profile_bio(browser, quote)
+        browser.quit()
 
-    async def instagram_follow_accounts(self):
+    async def instagram_follow_accounts(self, follow_count):
         browser = await self.sign_in_to_instagram()
-        await follow_accounts(browser)
+        await follow_accounts(browser,follow_count)
+        browser.quit()
 
 
 

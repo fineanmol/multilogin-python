@@ -5,7 +5,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
 
-async def follow_accounts(browser):
+
+async def follow_accounts(browser,follow_count):
     try:
         username = 'vindiesel'
         followerUsernameXPathStart = '/html/body/div[2]/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[2]/div[1]/div/div['
@@ -23,11 +24,9 @@ async def follow_accounts(browser):
         followersBtn = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, f"a[href='/{username}/followers/']")))
         followersBtn.click()
         time.sleep(1)
-        
-        
 
         # Scrape follower data
-        for item in range(1, 101):
+        for item in range(1, follow_count):
             try:
                 follow_buttons = browser.find_elements_by_xpath('//button[@type="button" and div="Follow"]')
                 if follow_buttons:
@@ -53,10 +52,12 @@ async def follow_accounts(browser):
                     # Scroll to the next set of elements
                     scroll_attempts = 0
                     while scroll_attempts < maxScrollAttempts:
-                        browser.execute_script(f"window.scrollBy(0, {scrollStep})")  # Scroll vertically by 'scrollStep' pixels
+                        browser.execute_script(
+                            f"window.scrollBy(0, {scrollStep})")  # Scroll vertically by 'scrollStep' pixels
                         time.sleep(scrollDelay / 1000)
 
-                        updated_follow_buttons = browser.find_elements_by_xpath('//button[@type="button" and div="Follow"]')
+                        updated_follow_buttons = browser.find_elements_by_xpath(
+                            '//button[@type="button" and div="Follow"]')
                         cancel_unfollow = browser.find_element_by_xpath('//button[text()="Cancel"]')
                         if cancel_unfollow:
                             cancel_unfollow.click()

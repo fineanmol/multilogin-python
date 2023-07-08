@@ -47,7 +47,7 @@ async def new_like_post(browser):
             logger.error(f"Failed to find articles: {e}")
 
 
-async def like_posts_handler(browser, daily_limit, session_limit):
+async def like_posts_handler(browser, required_count):
     try:
         global counter
         scroll_step = 125  # Number of pixels to scroll
@@ -76,8 +76,8 @@ async def like_posts_handler(browser, daily_limit, session_limit):
                         counter += 1
                         print({"Liked Pressed": counter, "username": str(username_fetch[i].text)})
 
-                        if counter >= session_limit:
-                            print(f"Reached the session limit of {session_limit}. Exiting session...")
+                        if counter >= required_count:
+                            print(f"Reached the session limit of {required_count}. Exiting session...")
                             return  # Exit the function, which will lead to terminating the session
 
             except StaleElementReferenceException:
@@ -87,14 +87,14 @@ async def like_posts_handler(browser, daily_limit, session_limit):
     except Exception as err:
         print("Error, Like Button Click Failed")
         print("Message:", str(err) if str(err) else "Unknown Error")
-        await like_posts_handler(browser, daily_limit, session_limit)
+        await like_posts_handler(browser, required_count)
 
 
-async def like_post(browser, daily_limit, session_limit):
+async def like_post(browser, required_count):
     try:
         # Go to the Instagram feed
         await delay(2)
-        await like_posts_handler(browser, daily_limit, session_limit)
+        await like_posts_handler(browser, required_count)
 
     except Exception as err:
         print(err)

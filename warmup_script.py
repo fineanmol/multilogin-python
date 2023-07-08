@@ -7,6 +7,7 @@ import threading
 import time
 
 from httpClient import HttpClient
+from lib.automation import Automation
 from logger import Logger
 from model.account import ActionType
 
@@ -21,19 +22,26 @@ async def perform_action(profile_name, account_id, current_day, action_type, cou
 
     # Perform the action
     if action_type == ActionType.LIKE:
+        bot = Automation(profile_name)
+        await bot.instagram_like_posts(count)
         logger.info(f"[Profile: {profile_name}] Session: {session_id} - [{action_type}] Like {1}/{count}")
     elif action_type == ActionType.FOLLOW:
+        bot = Automation(profile_name)
+        await bot.instagram_follow_accounts(count)
         logger.info(f"[Profile: {profile_name}] Session: {session_id} - [{action_type}] Follow {1}/{count}")
     elif action_type == ActionType.BIO_UPDATE:
+        bot = Automation(profile_name)
+        await bot.instagram_update_bio("Via la france")
         logger.info(f"[Profile: {profile_name}] Session: {session_id} - [{action_type}] Bio Update {1}/{count}")
     elif action_type == ActionType.MEDIA_UPLOAD:
+        bot = Automation(profile_name)
+        await bot.instagram_upload_profile_photo("/Users/nnishad/PythonProjects/multilogin-python/LinkedIn_icon.png")
         logger.info(f"[Profile: {profile_name}] Session: {session_id} - [{action_type}] Media Upload {1}/{count}")
     elif action_type == ActionType.BLOCK:
         logger.info(f"[Profile: {profile_name}] Session: {session_id} - [{action_type}] Block {1}/{count}")
     response = await HttpClient("http://127.0.0.1:3001/profile").put(
         f"/{profile_name}/accounts/{account_id}/warmup_configuration/{current_day}/actions/{action_type}/sessions/{session_id}/completed")
     logger.info(response)
-    time.sleep(5)
 
 
 def schedule_task(profile_name, account_id, current_day, action_type, count, session_id):

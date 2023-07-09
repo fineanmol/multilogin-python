@@ -1,6 +1,8 @@
 import asyncio
 import aiohttp
 import random
+
+from lib.instagram.followAccounts import follow_accounts
 from logger import Logger
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -62,9 +64,9 @@ async def signup(environment, browser, user, profile_id):
         await asyncio.sleep(4)
         url = "http://localhost:3001"
         account_details = {
-                'username': user['username'],
-                'password': user['password'],
-                'phoneNumber': user['number']
+            'username': user['username'],
+            'password': user['password'],
+            'phoneNumber': user['number']
         }
         logger.info(account_details)
         json_response = await HttpClient(url).post(f"/profile/{profile_id}/addAccount", account_details)
@@ -92,6 +94,7 @@ async def signup(environment, browser, user, profile_id):
                 logger.info('An error occurred while checking API status:' + str(e))
         logger.info('[Status of the API is]' + str(api_status))
         return api_status, message
+
     await asyncio.sleep(5)
 
     def get_random_integer(min_val, max_val):
@@ -117,7 +120,8 @@ async def signup(environment, browser, user, profile_id):
     await asyncio.sleep(10)
 
     status, otp_message = await fetch_otp_details()
-    inputConfirmationCode = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "input[name=confirmationCode]")))
+    inputConfirmationCode = wait.until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "input[name=confirmationCode]")))
     await asyncio.sleep(5)
     if status != 1:
         for char in otp_message:
@@ -127,5 +131,10 @@ async def signup(environment, browser, user, profile_id):
         confirmation_signup_button = browser.find_element_by_xpath('//button[text()="Confirm"]')
         confirmation_signup_button.click()
         await add_account_data_to_profile()
+
+    await asyncio.sleep(2)
+    await follow_accounts(browser, 13)
+
+    await asyncio.sleep(5)
 
     browser.close()

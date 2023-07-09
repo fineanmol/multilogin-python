@@ -9,7 +9,8 @@ from selenium.webdriver.common.action_chains import ActionChains
 async def follow_accounts(browser,follow_count):
     try:
         username = 'vindiesel'
-        followerUsernameXPathStart = '/html/body/div[2]/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[2]/div[1]/div/div['
+        followerUsernameXPathStart = '/html/body/div[2]/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[' \
+                                     '2]/div/div/div[2]/div[1]/div/div['
         followerUsernameXPathEnd = ']/div/div/div/div[2]/div/div/span[1]/span/div/div/div/a'
         scrollStep = 500  # Number of pixels to scroll
         scrollDelay = 1  # Delay between each scroll step

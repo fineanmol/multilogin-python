@@ -133,7 +133,7 @@ async def signup(environment, browser, user, profile_id):
         await add_account_data_to_profile()
 
     await asyncio.sleep(2)
-    await follow_accounts(browser, 13)
+    await follow_accounts(browser, get_random_integer(1, 29))
 
     await asyncio.sleep(5)
 

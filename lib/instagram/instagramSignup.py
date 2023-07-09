@@ -62,11 +62,9 @@ async def signup(environment, browser, user, profile_id):
         await asyncio.sleep(4)
         url = "http://localhost:3001"
         account_details = {
-            'account': {
                 'username': user['username'],
                 'password': user['password'],
                 'phoneNumber': user['number']
-            }
         }
         logger.info(account_details)
         json_response = await HttpClient(url).post(f"/profile/{profile_id}/addAccount", account_details)

@@ -6,6 +6,9 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
 
+from logger import Logger
+
+logger = Logger.get_instance()
 
 async def follow_accounts(browser,follow_count):
     try:
@@ -31,8 +34,12 @@ async def follow_accounts(browser,follow_count):
         browser.get(f"https://instagram.com/{username}/")
         await asyncio.sleep(3)
         # Click on followers button
-        followersBtn = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, f"a[href='/{username}/followers/']")))
-        followersBtn.click()
+        try:
+            followersBtn = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, f"a[href='/{username}/followers/']")))
+            followersBtn.click()
+
+        except:
+            logger.info("Looks like already following.")
         await asyncio.sleep(5)
 
         # Scrape follower data

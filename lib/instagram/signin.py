@@ -1,19 +1,21 @@
 import asyncio
+import os
 import time
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 import pickle
 
-
 from logger import Logger
 
 logger = Logger.get_instance()
-user_id=""
+
 
 # Save cookies to a file
 def save_cookie(browser, filename):
     cookies = browser.get_cookies()
+    os.makedirs(os.path.dirname(f'cookies/{filename}-cookies.pkl'),
+                exist_ok=True)  # Create directory if not present
     with open(f'cookies/{filename}-cookies.pkl', 'wb') as file:
         pickle.dump(cookies, file)
 
@@ -26,27 +28,27 @@ def load_cookie(browser, filename):
             for cookie in cookies:
                 browser.add_cookie(cookie)
     except FileNotFoundError:
-        print("Cookie not found")
+        logger.info("Cookie not found")
     except IOError:
-        print("An error occurred while reading cookies file")
+        logger.info("An error occurred while reading cookies file")
     except Exception as e:
-        print("An unexpected error occurred:", str(e))
+        logger.info("An unexpected error occurred:"+ str(e))
 
 
-
-async def signin(browser):
-    user = {
-        'email': 'jasonford468',
-        'password': ')7Y9sxfJJ&4Q'
-    }
+async def signin(browser,user):
+    # user = {
+    #     'email': 'jasonford468',
+    #     'password': ')7Y9sxfJJ&4Q'
+    # }
+    # logger.info("Starting sigin: "+user)
     browser.get('https://instagram.com')
     await asyncio.sleep(2)
-    load_cookie(browser, user['email'])
-    user_id= load_cookie(browser, user['email'])
+    load_cookie(browser, user['username'])
     await asyncio.sleep(2)
     browser.get('https://instagram.com')
     await asyncio.sleep(2)
     try:
+        logger.info("Clinking accept cookies")
         accept_cookies_button = browser.find_element_by_xpath('//button[text()="Allow all cookies"]')
         accept_cookies_button.click()
     except Exception as e:
@@ -59,8 +61,7 @@ async def signin(browser):
         # Wait until the elements are present
         wait = WebDriverWait(browser, 30)  # Maximum wait time of 30 seconds
         input_email_or_phone = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "input[name=username]")))
-        input_email_or_phone.send_keys(user.get('email') or user.get('username'))
-        user_id= user.get('email') or user.get('username')
+        input_email_or_phone.send_keys(user.get('username'))
 
         password = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "input[name=password]")))
         password.send_keys(user.get('password'))
@@ -85,16 +86,17 @@ async def signin(browser):
     except:
         logger.info("Turn On Notification popup not found")
     await asyncio.sleep(2)
-    save_cookie(browser, user['email'])
+    save_cookie(browser, user['username'])
     await asyncio.sleep(5)
 
-async def update_profile_bio(browser,quote):
+
+async def update_profile_bio(browser,user, quote):
     try:
         await asyncio.sleep(2)
         wait = WebDriverWait(browser, 30)  # Maximum wait await asyncio of 30 seconds
 
         # Go to the profile page
-        profile_link = browser.find_element(By.XPATH, "//a[@href='/" + user_id + "/']")
+        profile_link = browser.find_element(By.XPATH, "//a[@href='/" + user['username'] + "/']")
         profile_link.click()
         await asyncio.sleep(2)
 
@@ -104,10 +106,10 @@ async def update_profile_bio(browser,quote):
         await asyncio.sleep(3)
         try:
             account_center_button = browser.find_element_by_xpath('//div[@role="button"]')
-            if(len(account_center_button)>0):
+            if len(account_center_button) > 0:
                 cross_btn = account_center_button[1].click()
         except:
-            print('Account Center Button Not Found')
+            logger.info('Account Center Button Not Found')
 
         # Clear the existing bio and update it with the random quote
         bio_textarea = browser.find_element(By.XPATH, "//textarea")
@@ -119,10 +121,10 @@ async def update_profile_bio(browser,quote):
         await asyncio.sleep(2)
         submit_button.click()
 
-        print("Profile bio updated successfully.")
+        logger.info("Profile bio updated successfully.")
 
     except Exception as e:
-        print(f"An error occurred: {e}")
+        logger.info(f"An error occurred: {e}")
 
     finally:
         browser.quit()

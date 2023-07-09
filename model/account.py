@@ -1,67 +1,69 @@
-class Account:
-    def __init__(self, data):
-        self._id = data["_id"]
-        self.username = data["username"]
-        self.password = data["password"]
-        self.email = data["email"]
-        self.followers = data["followers"]
-        self.following = data["following"]
-        self.posts = data["posts"]
-        self.warmup_phase = data["warmup_phase"]
-        self.warmup_configuration = []
-
-        for config in data["warmup_configuration"]:
-            self.warmup_configuration.append(WarmupConfiguration(config))
-
-        self.last_login = data["last_login"]
-        self.created_at = data["created_at"]
-        self.daily_actions = []
-
-        for action in data["daily_actions"]:
-            self.daily_actions.append(DailyAction(action))
-
-        self.__v = data["__v"]
+from datetime import datetime
+from enum import Enum
+from typing import List, Optional
+from pydantic import BaseModel, Field
 
 
-class WarmupConfiguration:
-    def __init__(self, data):
-        self.day_of_week = data["day_of_week"]
-        self.actions = []
-
-        for action in data["actions"]:
-            self.actions.append(Action(action))
-
-        self._id = data["_id"]
+class ActionType(str, Enum):
+    LIKE = "LIKE"
+    FOLLOW = "FOLLOW"
+    BLOCK = "BLOCK"
+    BIO_UPDATE = "BIO_UPDATE"
+    MEDIA_UPLOAD = "MEDIA_UPLOAD"
 
 
-class Action:
-    def __init__(self, data):
-        self.action_type = data["action_type"]
-        self.count = data["count"]
-        self.sessions = data["sessions"]
-        self.start_time = data["start_time"]
-        self._id = data["_id"]
+class WarmupSession(BaseModel):
+    session_id: str
+    count: int
+    start_time: str
+    end_time: str
+    isSessionCompleted: bool
 
 
-class DailyAction:
-    def __init__(self, data):
-        self.date = data["date"]
-        self.sessions = []
-
-        for session in data["sessions"]:
-            self.sessions.append(Session(session))
-
-        self._id = data["_id"]
+class WarmupAction(BaseModel):
+    action_type: ActionType
+    sessions: List[WarmupSession]
+    isActionCompleted: bool
 
 
-class Session:
-    def __init__(self, data):
-        self.session_id = data["session_id"]
-        self.start_time = data["start_time"]
-        self.end_time = data["end_time"]
-        self.actions = []
+class WarmupConfiguration(BaseModel):
+    day_of_week: str
+    actions: List[WarmupAction]
+    isAllActionsCompleted: bool
 
-        for action in data["actions"]:
-            self.actions.append(Action(action))
 
-        self._id = data["_id"]
+class SessionAction(BaseModel):
+    action_id: str
+    action_type: ActionType
+    target_usernames: Optional[List[str]] = None
+
+
+class Session(BaseModel):
+    session_id: str
+    start_time: str
+    end_time: str
+    actions: List[SessionAction]
+
+
+class DailyAction(BaseModel):
+    date: str
+    sessions: List[Session]
+
+
+class Account(BaseModel):
+    username: str
+    password: str
+    phoneNumber: Optional[str]
+    createdTimestamp: datetime
+    email: str
+    followers: int
+    following: int
+    posts: int
+    last_login: datetime
+    created_at: datetime
+    warmup_phase: bool
+    warmup_configuration: List[WarmupConfiguration]
+    daily_actions: List[DailyAction]
+
+    class Config:
+        from_attributes = True

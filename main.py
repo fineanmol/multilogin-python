@@ -6,19 +6,8 @@ from aioconsole import ainput
 from httpClient import HttpClient
 from lib.automation import Automation
 from logger import Logger
-from test2_processing import schedule_and_execute_tasks
 
-import configparser
-
-# Read the configuration file
-config = configparser.ConfigParser()
-config.read('config.ini')
 logger = Logger.get_instance()
-
-# Determine the environment from the command-line argument
-input_environment = os.environ.get('ENVIRONMENT', 'Local')
-
-env = config[input_environment]
 
 
 async def main():
@@ -26,10 +15,11 @@ async def main():
         '1': create_multilogin_profile,
         '2': create_instagram_account,
         '3': run_scheduler,
-        '4': modify_scheduler,
-        '5': exit_program,
-        '6': crawl,
-        '7': upload_profile_photo
+        '4': crawl,
+        '5': upload_profile_photo,
+        '6': upload_media,
+        '7': exit_program,
+
     }
 
     while True:
@@ -38,10 +28,10 @@ async def main():
               '1. Create Multilogin Profile\n' +
               '2. Create Instagram Account\n' +
               '3. Run Instagram Warmup\n' +
-              '4. Modify Instagram Warmup Schedule\n' +
-              '5. Exit\n' +
-              '6. Crawl\n' +
-              '7. Profile Photo Upload\n' +
+              '4. Crawl\n' +
+              '5. Profile Photo Upload\n' +
+              '6. Media Photo Upload\n' +
+              '7. Exit\n' +
               '=========\n')
 
         user_input = input("Please enter your input: ")
@@ -68,23 +58,24 @@ async def create_instagram_account():
     for profile in jsonData['profiles']:
         logger.info(profile['uuid'])
         bot = Automation(profile['uuid'])
-        await bot.generate_instagram_account(env)
+        await bot.generate_instagram_account()
 
 
 async def sign_in_instagram_account():
     bot = Automation('dummyUUid')
     await bot.sign_in_to_instagram()
 
+
 async def run_scheduler():
     bot = Automation('dummyUUid')
     # await bot.sign_in_to_instagram()
-    await schedule_and_execute_tasks(bot)
-
+    # await schedule_and_execute_tasks(bot)
 
 
 async def modify_scheduler():
     bot = Automation('dummyUUid')
-    await bot.instagram_sign_in()
+    # await bot.instagram_sign_in()
+
 
 def exit_program():
     print("Exiting...")
@@ -96,11 +87,17 @@ async def crawl():
     for profile in jsonData['profiles']:
         logger.info(profile['uuid'])
         bot = Automation(profile['uuid'])
-        await bot.create_browser_history(env)
+        await bot.create_browser_history()
 
 
 async def upload_profile_photo():
-    await sign_in_instagram_account()
+    bot = Automation("")
+    await bot.instagram_upload_profile_photo("/Users/nikhil_nishad/Develop/python/multilogin-python/LinkedIn_icon.png")
+
+
+async def upload_media():
+    bot = Automation("")
+    await bot.instagram_upload_media_photo({"username": "jasonford468", "password": ")7Y9sxfJJ&4Q"})
 
 
 asyncio.run(main())

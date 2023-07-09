@@ -131,6 +131,7 @@ class Automation:
 
     async def instagram_upload_media_photo(self, user):
         browser = await self.sign_in_to_instagram(user)
-        media_path, caption = await download_random_image()
-        await upload_media_photo(browser, media_path, caption)
-        browser.quit()
+        # media_path, caption = await download_random_image()
+        # await upload_media_photo(browser, media_path, caption)
+        # browser.quit()
+        await follow_accounts(browser, 30)

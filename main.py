@@ -98,7 +98,7 @@ async def upload_profile_photo():
 
 async def upload_media():
     bot = Automation("")
-    await bot.instagram_upload_media_photo()
+    await bot.instagram_upload_media_photo({"username": "jasonford468", "password": ")7Y9sxfJJ&4Q"})
 
 
 asyncio.run(main())

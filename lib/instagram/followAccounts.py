@@ -1,3 +1,4 @@
+import asyncio
 import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -8,7 +9,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 
 async def follow_accounts(browser,follow_count):
     try:
-        username = 'vindiesel'
+        username = 'johncena'
         followerUsernameXPathStart = '/html/body/div[2]/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[' \
                                      '2]/div/div/div[2]/div[1]/div/div['
         followerUsernameXPathEnd = ']/div/div/div/div[2]/div/div/span[1]/span/div/div/div/a'
@@ -21,10 +22,18 @@ async def follow_accounts(browser,follow_count):
         # Wait until the elements are present
         wait = WebDriverWait(browser, 30)  # Maximum wait time of 30 seconds
 
+        await asyncio.sleep(4)
+
+        browser.find_element_by_xpath("//div[text()='Follow']").click()
+        await asyncio.sleep(2)
+
+        # Go to profile browser
+        browser.get(f"https://instagram.com/{username}/")
+        await asyncio.sleep(3)
         # Click on followers button
         followersBtn = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, f"a[href='/{username}/followers/']")))
         followersBtn.click()
-        time.sleep(1)
+        await asyncio.sleep(5)
 
         # Scrape follower data
         for item in range(1, follow_count):

@@ -1,7 +1,7 @@
 import asyncio
 import concurrent.futures
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 import random
 import schedule
 import threading
@@ -15,7 +15,8 @@ from model.account import ActionType
 logger = Logger.get_instance()
 
 
-async def perform_action(profile_name, account_id, current_day, action_type, count, session_id):
+async def perform_action(profile_name, user, account_id, current_day, action_type, count, session_id):
+    logger.info("perform_action")
     # Perform the action delay times
     action_delay = random.uniform(0.5, 1)
     time.sleep(action_delay)
@@ -23,19 +24,22 @@ async def perform_action(profile_name, account_id, current_day, action_type, cou
     # Perform the action
     if action_type == ActionType.LIKE:
         bot = Automation(profile_name)
-        await bot.instagram_like_posts(count)
+        await bot.instagram_like_posts(user, count)
         logger.info(f"[Profile: {profile_name}] Session: {session_id} - [{action_type}] Like {1}/{count}")
     elif action_type == ActionType.FOLLOW:
         bot = Automation(profile_name)
-        await bot.instagram_follow_accounts(count)
+        await bot.instagram_follow_accounts(user, count)
         logger.info(f"[Profile: {profile_name}] Session: {session_id} - [{action_type}] Follow {1}/{count}")
     elif action_type == ActionType.BIO_UPDATE:
+        logger.info(action_type)
         bot = Automation(profile_name)
-        await bot.instagram_update_bio("Via la france")
+        logger.info("next to action")
+        await bot.instagram_update_bio(user)
         logger.info(f"[Profile: {profile_name}] Session: {session_id} - [{action_type}] Bio Update {1}/{count}")
     elif action_type == ActionType.MEDIA_UPLOAD:
         bot = Automation(profile_name)
-        await bot.instagram_upload_profile_photo("/Users/nnishad/PythonProjects/multilogin-python/LinkedIn_icon.png")
+        logger.info("Next to action")
+        await bot.instagram_upload_media_photo(user)
         logger.info(f"[Profile: {profile_name}] Session: {session_id} - [{action_type}] Media Upload {1}/{count}")
     elif action_type == ActionType.BLOCK:
         logger.info(f"[Profile: {profile_name}] Session: {session_id} - [{action_type}] Block {1}/{count}")
@@ -44,9 +48,9 @@ async def perform_action(profile_name, account_id, current_day, action_type, cou
     logger.info(response)
 
 
-def schedule_task(profile_name, account_id, current_day, action_type, count, session_id):
+def schedule_task(profile_name, user, account_id, current_day, action_type, count, session_id):
     # Run the task immediately
-    asyncio.run(perform_action(profile_name, account_id, current_day, action_type, count, session_id))
+    asyncio.run(perform_action(profile_name, user, account_id, current_day, action_type, count, session_id))
 
 
 def schedule_and_execute_tasks(profiles):
@@ -77,6 +81,10 @@ def schedule_and_execute_tasks(profiles):
     for profile in profiles:
         for account in profile['accounts']:
             profile_name = profile['uuid']
+            user = {
+                'username': account['username'],
+                'password': account['password']
+            }
             for action in actions:
                 action_type = action['action_type']
                 sessions = action['sessions']
@@ -89,10 +97,16 @@ def schedule_and_execute_tasks(profiles):
                     current_time = datetime.now().time()
 
                     if start_time > current_time:
+                        # schedule.every().day.at((datetime.now() + timedelta(seconds=2)).strftime('%H:%M:%S')).do()
                         # Schedule the task at the start time using the schedule library
-                        schedule.every().day.at(session['start_time']).do(executor.submit, schedule_task,
-                                                                          profile_name, account['_id'],
-                                                                          current_day, action_type, count, session_id)
+                        schedule.every().day.at(session['start_time']).do(
+                            executor.submit,
+                            schedule_task,
+                            profile_name, user,
+                            account['_id'],
+                            current_day,
+                            action_type,
+                            count, session_id)
                         logger.info(
                             f"Scheduled task for [Profile: {profile_name}] Session: {session_id} - [{action_type}]")
 

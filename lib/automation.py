@@ -23,6 +23,7 @@ logger = Logger.get_instance()
 
 
 async def browser_local():
+    logger.info("browser_local")
     # chromedriver_autoinstaller.install()  # Check if the current version of chromedriver exists
     return webdriver.Chrome('./chromedriver/chromedriver')
 
@@ -45,31 +46,36 @@ async def browser_multilogin(profile_id):
 
 class Automation:
     def __init__(self, profile_id):
+        logger.info("Automation instance")
         self.profile_id = profile_id
         self.environment = env
 
-    async def sign_in_to_instagram(self):
+    async def sign_in_to_instagram(self, user):
+        logger.info("sign_in_to_instagram")
         browser = await self.get_browser()
-        await signin(browser)
+        await signin(browser, user)
         return browser
 
-    async def instagram_like_posts(self, daily_limit):
-        browser = await self.sign_in_to_instagram()
+    async def instagram_like_posts(self, user, daily_limit):
+        browser = await self.sign_in_to_instagram(user)
         await like_post(browser, daily_limit)
         browser.quit()
 
-    async def instagram_upload_profile_photo(self, photo_path):
-        browser = await self.sign_in_to_instagram()
+    async def instagram_upload_profile_photo(self, user, photo_path):
+        browser = await self.sign_in_to_instagram(user)
         await upload_profile_photo(browser, photo_path)
         browser.quit()
 
-    async def instagram_update_bio(self, quote):
-        browser = await self.sign_in_to_instagram()
-        await update_profile_bio(browser, quote)
+    async def instagram_update_bio(self, user):
+        browser = await self.sign_in_to_instagram(user)
+        logger.info("Signin browser found")
+        quote = fake.sentence(nb_words=10, variable_nb_words=True)
+        await update_profile_bio(browser, user, quote)
         browser.quit()
 
-    async def instagram_follow_accounts(self, follow_count):
-        browser = await self.sign_in_to_instagram()
+    async def instagram_follow_accounts(self, user, follow_count):
+        browser = await self.sign_in_to_instagram(user)
+        logger.info("Signin browser found")
         await follow_accounts(browser, follow_count)
         browser.quit()
 
@@ -123,8 +129,8 @@ class Automation:
         browser = await self.get_browser()
         await start_crawler(browser, self.profile_id)
 
-    async def instagram_upload_media_photo(self):
-        browser = await self.sign_in_to_instagram()
+    async def instagram_upload_media_photo(self, user):
+        browser = await self.sign_in_to_instagram(user)
         media_path, caption = await download_random_image()
         await upload_media_photo(browser, media_path, caption)
-        # browser.quit()
+        browser.quit()

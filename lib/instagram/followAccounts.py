@@ -27,19 +27,18 @@ async def follow_accounts(browser,follow_count):
 
         await asyncio.sleep(4)
 
-        browser.find_element_by_xpath("//div[text()='Follow']").click()
+        try:
+            browser.find_element_by_xpath("//div[text()='Follow']").click()
+        except:
+            logger.info("Looks like already following.")
         await asyncio.sleep(2)
 
         # Go to profile browser
         browser.get(f"https://instagram.com/{username}/")
         await asyncio.sleep(3)
         # Click on followers button
-        try:
-            followersBtn = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, f"a[href='/{username}/followers/']")))
-            followersBtn.click()
-
-        except:
-            logger.info("Looks like already following.")
+        followersBtn = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, f"a[href='/{username}/followers/']")))
+        followersBtn.click()
         await asyncio.sleep(5)
 
         # Scrape follower data

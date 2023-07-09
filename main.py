@@ -15,11 +15,11 @@ async def main():
         '1': create_multilogin_profile,
         '2': create_instagram_account,
         '3': run_scheduler,
-        '4': modify_scheduler,
-        '5': exit_program,
-        '6': crawl,
-        '7': upload_profile_photo,
-        '8': upload_media
+        '4': crawl,
+        '5': upload_profile_photo,
+        '6': upload_media,
+        '7': exit_program,
+
     }
 
     while True:
@@ -28,11 +28,10 @@ async def main():
               '1. Create Multilogin Profile\n' +
               '2. Create Instagram Account\n' +
               '3. Run Instagram Warmup\n' +
-              '4. Modify Instagram Warmup Schedule\n' +
-              '5. Exit\n' +
-              '6. Crawl\n' +
-              '7. Profile Photo Upload\n' +
-              '8. Media Photo Upload\n' +
+              '4. Crawl\n' +
+              '5. Profile Photo Upload\n' +
+              '6. Media Photo Upload\n' +
+              '7. Exit\n' +
               '=========\n')
 
         user_input = input("Please enter your input: ")
